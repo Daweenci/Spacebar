@@ -63,7 +63,8 @@ func _process(delta):
 	if approach_timer_running:
 		var progress = approach_timer / approach_time_max
 		clock.value = progress * 100.0
-	elif mixing_timer_running:
+
+	if mixing_timer_running:
 		var progress = mixing_timer / mixing_time_max
 		clock.value = progress * 100.0
 		
@@ -72,7 +73,9 @@ func _process(delta):
 		if approach_timer <= 0:
 			fail_customer()
 
-	if (state == GameState.SHOW_RECIPE or state == GameState.MIXING) and mixing_timer_running:
+	if (state == GameState.SHOW_RECIPE 
+	or state == GameState.MIXING 
+	or state == GameState.DELIVERY) and mixing_timer_running:
 		mixing_timer -= delta
 		if mixing_timer <= 0:
 			fail_customer()
