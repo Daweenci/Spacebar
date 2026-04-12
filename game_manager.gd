@@ -12,11 +12,17 @@ enum GameState {
 @onready var customer = get_node("/root/Node2D/Customer")
 @onready var clock = get_node("/root/Node2D/UI/Clock")
 
+
+#recipe
+var possible_ingredients = ["apple", "orange", "bananna", 
+"mango", "kiwi", "lemon", "watermelon"]
+
 var current_recipe = []
 var player_input = []
 var recipe_length = 3
 
 var current_step = 0
+var current_choices = []
 var selecting = false
 
 # config
@@ -135,6 +141,8 @@ func accept_order():
 	mixing_timer = mixing_time_max
 	mixing_timer_running = true
 
+	generate_recipe()
+
 	state = GameState.SHOW_RECIPE
 
 
@@ -142,11 +150,17 @@ func start_mixing():
 	if state != GameState.SHOW_RECIPE:
 		return
 
+	player_input.clear()
+	current_step = 0
+	selecting = true
+
+	show_next_choices()
+
 	state = GameState.MIXING
 
 
 func deliver():
-	if state != GameState.MIXING:
+	if state != GameState.DELIVERY:
 		return
 
 	mixing_timer_running = false
@@ -157,7 +171,8 @@ func deliver():
 	hide_clock()
 	await get_tree().create_timer(cooldown_time).timeout
 	start_customer()
-	
+
+
 func show_clock():
 	clock.visible = true
 	clock.scale = Vector2.ZERO
@@ -168,6 +183,7 @@ func show_clock():
 
 	tween.tween_property(clock, "scale", Vector2(1.2, 1.2), 0.2)
 	tween.tween_property(clock, "scale", Vector2(1.0, 1.0), 0.1)
+
 
 func hide_clock():
 	var tween = create_tween()
@@ -180,3 +196,79 @@ func hide_clock():
 	tween.finished.connect(func():
 		clock.visible = false
 	)
+
+
+func generate_recipe():
+	current_recipe.clear()
+
+	for i in range(recipe_length):
+		var ingredient = possible_ingredients[randi() % possible_ingredients.size()]
+		current_recipe.append(ingredient)
+
+	print("Recipe:", current_recipe)
+
+
+func _input(event):
+
+	if state == GameState.SHOW_RECIPE:
+		if event.is_action_pressed("w") or event.is_action_pressed("a") or event.is_action_pressed("s") or event.is_action_pressed("d"):
+			start_mixing()
+
+	elif state == GameState.MIXING and selecting:
+		handle_selection(event)
+
+
+func show_next_choices():
+	current_choices.clear()
+
+	var correct = current_recipe[current_step]
+
+	var correct_index = randi() % 4
+
+	for i in range(4):
+		if i == correct_index:
+			current_choices.append(correct)
+		else:
+			var wrong = possible_ingredients[randi() % possible_ingredients.size()]
+
+			while wrong == correct:
+				wrong = possible_ingredients[randi() % possible_ingredients.size()]
+
+			current_choices.append(wrong)
+
+	print("Correct:", correct)
+	print("Choices:", current_choices)
+
+
+func handle_selection(event):
+
+	if event.is_action_pressed("w"):
+		select_ingredient(0)
+	elif event.is_action_pressed("a"):
+		select_ingredient(1)
+	elif event.is_action_pressed("s"):
+		select_ingredient(2)
+	elif event.is_action_pressed("d"):
+		select_ingredient(3)
+
+
+func select_ingredient(index):
+	if index >= current_choices.size():
+		return
+
+	var chosen = current_choices[index]
+	player_input.append(chosen)
+
+	print("Selected:", chosen)
+
+	current_step += 1
+
+	if current_step >= recipe_length:
+		finish_mixing()
+	else:
+		show_next_choices()
+
+
+func finish_mixing():
+	selecting = false
+	state = GameState.DELIVERY

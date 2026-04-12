@@ -31,6 +31,8 @@ func setup_lanes():
 	
 
 func _process(delta):
+	if current_lane == lane_count - 1 and game_manager.state == game_manager.GameState.DELIVERY:
+		game_manager.deliver()
 	handle_input()
 	position.x = move_toward(position.x, target_x, switch_speed * delta)
 	
@@ -43,7 +45,7 @@ func handle_input():
 		current_lane = min(lane_count - 1, current_lane + 1)
 		target_x = lanes[current_lane]
 	
-	if current_lane == 3:
+	if current_lane == lane_count - 1 and game_manager.state == game_manager.GameState.CLIENT_WAITING:
 		game_manager.accept_order()
 		
 		
