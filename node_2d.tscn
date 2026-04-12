@@ -1,0 +1,63 @@
+[gd_scene format=3 uid="uid://cmentlvggypgx"]
+
+[ext_resource type="Script" uid="uid://bq1tmb7tx701w" path="res://star_background.gd" id="1_0e48y"]
+[ext_resource type="Texture2D" uid="uid://q5qy1hrwk6tw" path="res://Sprites/Stars_background.png" id="2_epypp"]
+[ext_resource type="Script" uid="uid://xi058bfw0yyl" path="res://player.gd" id="3_0hol4"]
+[ext_resource type="Texture2D" uid="uid://cq4pfybv3f18f" path="res://icon.svg" id="4_q6r6c"]
+[ext_resource type="Script" uid="uid://coxwqewywbgtr" path="res://meteor_spawner.gd" id="5_kdubu"]
+[ext_resource type="PackedScene" uid="uid://cru8gqkg8vfyn" path="res://meteor.tscn" id="6_d21ai"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_kdubu"]
+radius = 35.0
+height = 156.0
+
+[node name="Node2D" type="Node2D" unique_id=659122761]
+
+[node name="StarBackground" type="Node2D" parent="." unique_id=2095127330]
+position = Vector2(640, 359)
+script = ExtResource("1_0e48y")
+
+[node name="TextureRect" type="TextureRect" parent="StarBackground" unique_id=1117131326]
+offset_top = -1079.0
+offset_right = 640.0
+offset_bottom = 361.0
+texture = ExtResource("2_epypp")
+stretch_mode = 1
+
+[node name="Player" type="CharacterBody2D" parent="." unique_id=976441725]
+position = Vector2(972, 619)
+collision_mask = 2
+script = ExtResource("3_0hol4")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player" unique_id=723798775]
+shape = SubResource("CapsuleShape2D_kdubu")
+
+[node name="Sprite2D" type="Sprite2D" parent="Player" unique_id=1510451810]
+position = Vector2(0, -1)
+scale = Vector2(0.546875, 1.2265625)
+texture = ExtResource("4_q6r6c")
+
+[node name="Hurtbox" type="Area2D" parent="Player" unique_id=122032103]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player/Hurtbox" unique_id=1598826259]
+shape = SubResource("CapsuleShape2D_kdubu")
+
+[node name="MeteorSpawner" type="Node2D" parent="." unique_id=2146611452]
+script = ExtResource("5_kdubu")
+meteor_scene = ExtResource("6_d21ai")
+
+[node name="MeteorTimer" type="Timer" parent="." unique_id=1006086067]
+autostart = true
+
+[node name="UI" type="CanvasLayer" parent="." unique_id=544085863]
+
+[node name="HP" type="Label" parent="UI" unique_id=589180516]
+offset_left = 665.0
+offset_top = 657.0
+offset_right = 764.0
+offset_bottom = 712.0
+theme_override_font_sizes/font_size = 32
+text = "HP: 5"
+
+[connection signal="area_entered" from="Player/Hurtbox" to="Player" method="_on_hurtbox_area_entered"]
+[connection signal="timeout" from="MeteorTimer" to="MeteorSpawner" method="_on_meteor_timer_timeout"]
