@@ -9,6 +9,7 @@
 [ext_resource type="Texture2D" uid="uid://b0c74f3dqfw1o" path="res://Sprites/Clock_background.png" id="7_4d7sh"]
 [ext_resource type="Script" uid="uid://110t8slt34hp" path="res://game_manager.gd" id="7_d21ai"]
 [ext_resource type="Texture2D" uid="uid://bsvm1dppumhc8" path="res://Sprites/Clock_fill.png" id="8_ir8iy"]
+[ext_resource type="PackedScene" uid="uid://c0tsfytwx154q" path="res://ingredient_slot.tscn" id="9_ir8iy"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_kdubu"]
 radius = 35.0
@@ -88,9 +89,43 @@ offset_bottom = 328.0
 
 [node name="IngredientsContainer" type="Control" parent="UI" unique_id=511063971]
 layout_mode = 3
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 123.0
+offset_top = 100.0
+offset_right = -762.0
+offset_bottom = -157.0
+
+[node name="CenterContainer" type="CenterContainer" parent="UI/IngredientsContainer" unique_id=1773376658]
+layout_mode = 0
+offset_left = -2.0
+offset_top = 2.0
+offset_right = 392.0
+offset_bottom = 468.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/IngredientsContainer/CenterContainer" unique_id=661913887]
+layout_mode = 2
+
+[node name="IngredientSlotW" parent="UI/IngredientsContainer/CenterContainer/VBoxContainer" unique_id=1871032231 instance=ExtResource("9_ir8iy")]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/IngredientsContainer/CenterContainer/VBoxContainer" unique_id=122594154]
+layout_mode = 2
+
+[node name="IngredientSlotA" parent="UI/IngredientsContainer/CenterContainer/VBoxContainer/HBoxContainer" unique_id=1778803333 instance=ExtResource("9_ir8iy")]
+layout_mode = 2
+
+[node name="Spacer" type="Control" parent="UI/IngredientsContainer/CenterContainer/VBoxContainer/HBoxContainer" unique_id=693669917]
+custom_minimum_size = Vector2(128, 128)
+layout_mode = 2
+
+[node name="IngredientSlotD" parent="UI/IngredientsContainer/CenterContainer/VBoxContainer/HBoxContainer" unique_id=872657761 instance=ExtResource("9_ir8iy")]
+layout_mode = 2
+
+[node name="IngredientSlotS" parent="UI/IngredientsContainer/CenterContainer/VBoxContainer" unique_id=2076734103 instance=ExtResource("9_ir8iy")]
+layout_mode = 2
+size_flags_horizontal = 4
 
 [node name="GameManager" type="Node" parent="." unique_id=126490208]
 script = ExtResource("7_d21ai")

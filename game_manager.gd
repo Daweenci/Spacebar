@@ -23,6 +23,12 @@ var ingredient_textures = {
 @onready var clock = get_node("/root/Node2D/UI/Clock")
 @onready var recipe_container = get_node("/root/Node2D/UI/RecipePanel/HFlowContainer")
 @onready var recipe_panel = get_node("/root/Node2D/UI/RecipePanel")
+@onready var ingredients_panel = get_node("/root/Node2D/UI/IngredientsContainer")
+
+@onready var slot_w = get_node("/root/Node2D/UI/IngredientsContainer/CenterContainer/VBoxContainer/IngredientSlotW")
+@onready var slot_a = get_node("/root/Node2D/UI/IngredientsContainer/CenterContainer/VBoxContainer/HBoxContainer/IngredientSlotA")
+@onready var slot_s = get_node("/root/Node2D/UI/IngredientsContainer/CenterContainer/VBoxContainer/IngredientSlotS")
+@onready var slot_d = get_node("/root/Node2D/UI/IngredientsContainer/CenterContainer/VBoxContainer/HBoxContainer/IngredientSlotD")
 
 var slot_scene = preload("res://ingredient_slot.tscn")
 
@@ -134,7 +140,10 @@ func send_customer_away():
 func fail_customer():
 	approach_timer_running = false
 	mixing_timer_running = false
+	
 	recipe_panel.visible = false
+	ingredients_panel.visible = false
+	selecting = false
 
 	give_stars(1)
 
@@ -172,6 +181,7 @@ func start_mixing():
 		return
 		
 	recipe_panel.visible = false
+	ingredients_panel.visible = true
 	player_input.clear()
 	current_step = 0
 	selecting = true
@@ -244,7 +254,6 @@ func show_next_choices():
 	current_choices.clear()
 
 	var correct = current_recipe[current_step]
-
 	var correct_index = randi() % 4
 
 	for i in range(4):
@@ -252,24 +261,31 @@ func show_next_choices():
 			current_choices.append(correct)
 		else:
 			var wrong = possible_ingredients[randi() % possible_ingredients.size()]
-
 			while wrong == correct:
 				wrong = possible_ingredients[randi() % possible_ingredients.size()]
-
 			current_choices.append(wrong)
 
 	print("Correct:", correct)
 	print("Choices:", current_choices)
+
+	var slots = [slot_w, slot_a, slot_s, slot_d]
+
+	for i in range(4):
+		var texture_rect = slots[i].get_node("TextureRect")
+		texture_rect.texture = ingredient_textures[current_choices[i]]
 
 
 func handle_selection(event):
 
 	if event.is_action_pressed("w"):
 		select_ingredient(0)
+
 	elif event.is_action_pressed("a"):
 		select_ingredient(1)
+
 	elif event.is_action_pressed("s"):
 		select_ingredient(2)
+
 	elif event.is_action_pressed("d"):
 		select_ingredient(3)
 
@@ -277,7 +293,10 @@ func handle_selection(event):
 func select_ingredient(index):
 	if index >= current_choices.size():
 		return
-
+		
+	highlight_slot(index)
+	await get_tree().create_timer(0.15).timeout
+	
 	var chosen = current_choices[index]
 	player_input.append(chosen)
 
@@ -305,4 +324,13 @@ func show_recipe_ui():
 
 func finish_mixing():
 	selecting = false
+	ingredients_panel.visible = false
 	state = GameState.DELIVERY
+	
+func highlight_slot(index):
+	var slots = [slot_w, slot_a, slot_s, slot_d]
+
+	for i in range(4):
+		slots[i].modulate = Color(1, 1, 1)
+
+	slots[index].modulate = Color(1.5, 1.5, 1.5)
