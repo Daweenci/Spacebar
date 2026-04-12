@@ -1,0 +1,15 @@
+[gd_scene format=3 uid="uid://c0tsfytwx154q"]
+
+[node name="IngredientSlot" type="Control" unique_id=1871032231]
+custom_minimum_size = Vector2(128, 128)
+layout_mode = 3
+anchors_preset = 0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=1154353028]
+layout_mode = 0
+offset_right = 100.0
+offset_bottom = 100.0
+expand_mode = 1
+stretch_mode = 5

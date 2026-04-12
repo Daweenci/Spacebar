@@ -73,6 +73,25 @@ nine_patch_stretch = true
 texture_under = ExtResource("7_4d7sh")
 texture_progress = ExtResource("8_ir8iy")
 
+[node name="RecipePanel" type="Control" parent="UI" unique_id=1783354432]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 30.0
+offset_top = 186.0
+offset_right = 620.0
+offset_bottom = 519.0
+
+[node name="HFlowContainer" type="HFlowContainer" parent="UI/RecipePanel" unique_id=348989132]
+layout_mode = 0
+offset_right = 586.0
+offset_bottom = 328.0
+
+[node name="IngredientsContainer" type="Control" parent="UI" unique_id=511063971]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
 [node name="GameManager" type="Node" parent="." unique_id=126490208]
 script = ExtResource("7_d21ai")
 

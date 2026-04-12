@@ -9,12 +9,26 @@ enum GameState {
 	RESULT
 }
 
+var ingredient_textures = {
+	"apple": preload("res://Sprites/Apple.png"),
+	"orange": preload("res://Sprites/Orange.png"),
+	"banana": preload("res://Sprites/Banana.png"),
+	"mango": preload("res://Sprites/Mango.png"),
+	"kiwi": preload("res://Sprites/Kiwi.png"),
+	"lemon": preload("res://Sprites/Lemon.png"),
+	"watermelon": preload("res://Sprites/Watermelon.png")
+}
+
 @onready var customer = get_node("/root/Node2D/Customer")
 @onready var clock = get_node("/root/Node2D/UI/Clock")
+@onready var recipe_container = get_node("/root/Node2D/UI/RecipePanel/HFlowContainer")
+@onready var recipe_panel = get_node("/root/Node2D/UI/RecipePanel")
+
+var slot_scene = preload("res://ingredient_slot.tscn")
 
 
 #recipe
-var possible_ingredients = ["apple", "orange", "bananna", 
+var possible_ingredients = ["apple", "orange", "banana", 
 "mango", "kiwi", "lemon", "watermelon"]
 
 var current_recipe = []
@@ -120,6 +134,7 @@ func send_customer_away():
 func fail_customer():
 	approach_timer_running = false
 	mixing_timer_running = false
+	recipe_panel.visible = false
 
 	give_stars(1)
 
@@ -145,14 +160,18 @@ func accept_order():
 	mixing_timer_running = true
 
 	generate_recipe()
-
+	show_recipe_ui()
+	
+	recipe_panel.visible = true
+	
 	state = GameState.SHOW_RECIPE
 
 
 func start_mixing():
 	if state != GameState.SHOW_RECIPE:
 		return
-
+		
+	recipe_panel.visible = false
 	player_input.clear()
 	current_step = 0
 	selecting = true
@@ -270,6 +289,18 @@ func select_ingredient(index):
 		finish_mixing()
 	else:
 		show_next_choices()
+
+
+func show_recipe_ui():
+	for child in recipe_container.get_children():
+		child.queue_free()
+
+	for ingredient in current_recipe:
+		var slot = slot_scene.instantiate()
+		var texture_rect = slot.get_node("TextureRect")
+		texture_rect.texture = ingredient_textures[ingredient]
+
+		recipe_container.add_child(slot)
 
 
 func finish_mixing():
