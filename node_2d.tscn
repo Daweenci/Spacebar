@@ -6,6 +6,9 @@
 [ext_resource type="Texture2D" uid="uid://cq4pfybv3f18f" path="res://icon.svg" id="4_q6r6c"]
 [ext_resource type="Script" uid="uid://coxwqewywbgtr" path="res://meteor_spawner.gd" id="5_kdubu"]
 [ext_resource type="PackedScene" uid="uid://cru8gqkg8vfyn" path="res://meteor.tscn" id="6_d21ai"]
+[ext_resource type="Texture2D" uid="uid://b0c74f3dqfw1o" path="res://Sprites/Clock_background.png" id="7_4d7sh"]
+[ext_resource type="Script" uid="uid://110t8slt34hp" path="res://game_manager.gd" id="7_d21ai"]
+[ext_resource type="Texture2D" uid="uid://bsvm1dppumhc8" path="res://Sprites/Clock_fill.png" id="8_ir8iy"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_kdubu"]
 radius = 35.0
@@ -58,6 +61,25 @@ offset_right = 764.0
 offset_bottom = 712.0
 theme_override_font_sizes/font_size = 32
 text = "HP: 5"
+
+[node name="Clock" type="TextureProgressBar" parent="UI" unique_id=2146252870]
+offset_left = 559.0
+offset_top = 3.0
+offset_right = 730.0
+offset_bottom = 150.0
+scale = Vector2(1e-05, 1e-05)
+fill_mode = 5
+nine_patch_stretch = true
+texture_under = ExtResource("7_4d7sh")
+texture_progress = ExtResource("8_ir8iy")
+
+[node name="GameManager" type="Node" parent="." unique_id=126490208]
+script = ExtResource("7_d21ai")
+
+[node name="Customer" type="Sprite2D" parent="." unique_id=78598424]
+position = Vector2(1333, 805)
+scale = Vector2(0.5078125, 1)
+texture = ExtResource("4_q6r6c")
 
 [connection signal="area_entered" from="Player/Hurtbox" to="Player" method="_on_hurtbox_area_entered"]
 [connection signal="timeout" from="MeteorTimer" to="MeteorSpawner" method="_on_meteor_timer_timeout"]

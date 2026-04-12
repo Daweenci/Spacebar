@@ -1,6 +1,7 @@
 extends CharacterBody2D
 
 @onready var hp_label = get_node("/root/Node2D/UI/HP")
+@onready var game_manager = get_node("/root/Node2D/GameManager")
 
 var lane_count = 4
 var lanes = []
@@ -20,7 +21,7 @@ func _ready():
 func setup_lanes():
 	var base_width = 1280 #projekt width
 	var left_offset = 640 #verschiebung um die Hälfte
-	var road_width = base_width * 0.5 - 128  #1280 * 0.1 weil die 5fte lane den Kunden gehört
+	var road_width = base_width * 0.5 - 128  #128 = 1280 * 0.1 weil die 5fte lane den Kunden gehört
 	
 	var lane_width = road_width / lane_count
 	
@@ -41,6 +42,10 @@ func handle_input():
 	if Input.is_action_just_pressed("right"):
 		current_lane = min(lane_count - 1, current_lane + 1)
 		target_x = lanes[current_lane]
+	
+	if current_lane == 3:
+		game_manager.accept_order()
+		
 		
 func _physics_process(delta):
 	move_and_slide()		
