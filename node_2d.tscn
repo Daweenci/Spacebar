@@ -133,10 +133,10 @@ layout_mode = 2
 size_flags_horizontal = 4
 
 [node name="ScoreLabel" type="Label" parent="UI" unique_id=1858744426]
-offset_left = 1141.0
-offset_top = 25.0
-offset_right = 1262.0
-offset_bottom = 70.0
+offset_left = 1114.0
+offset_top = 23.0
+offset_right = 1235.0
+offset_bottom = 68.0
 theme_override_font_sizes/font_size = 32
 text = "Score: 0"
 
