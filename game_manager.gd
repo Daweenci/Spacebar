@@ -41,7 +41,8 @@ var possible_ingredients = ["apple", "orange", "banana",
 
 var current_recipe = []
 var player_input = []
-var recipe_length = 3
+var recipe_length_start = 3
+var recipe_length = recipe_length_start
 
 var current_step = 0
 var current_choices = []
@@ -78,6 +79,7 @@ var mixing_timer_running = false
 var pending_stars = 0
 var score = 0
 var reputation = 5
+var max_recipe_length = 10
 
 
 func _ready():
@@ -375,6 +377,8 @@ func apply_result(stars):
 	score += stars
 	update_score_ui()
 	
+	update_difficulty()
+	
 	if stars == 5:
 		reputation += 2
 	elif stars == 4:
@@ -408,4 +412,13 @@ func update_score_ui():
 
 
 func update_reputation_ui():
-	reputation_bar.value = reputation	
+	reputation_bar.value = reputation
+	
+
+func update_difficulty():
+	var new_length = recipe_length_start + int(score / 10)
+
+	if new_length > max_recipe_length:
+		new_length = max_recipe_length
+
+	recipe_length = new_length
