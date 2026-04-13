@@ -3,6 +3,8 @@ extends CharacterBody2D
 @onready var hp_label = get_node("/root/Node2D/UI/HP")
 @onready var game_manager = get_node("/root/Node2D/GameManager")
 
+@onready var sprite = $Sprite2D
+
 var lane_count = 4
 var lanes = []
 var current_lane = 2
@@ -13,6 +15,8 @@ var switch_speed = 800
 var health = 5
 var is_invincible = false
 var invincibility_time = 2
+
+var is_blinking = false
 
 
 func _ready():
@@ -69,13 +73,31 @@ func take_damage():
 	start_invincibility()
 
 func start_invincibility():
+	if is_invincible:
+		return
+		
 	is_invincible = true
 	
+	if not is_blinking:
+		blink()
+
 	await get_tree().create_timer(invincibility_time).timeout
 	
 	is_invincible = false
+	sprite.visible = true
 		
+
+func blink():
+	is_blinking = true
+	
+	while is_invincible:
+		sprite.visible = !sprite.visible
+		await get_tree().create_timer(0.1).timeout
+	
+	sprite.visible = true
+	is_blinking = false
 		
+
 func game_over():
 	print("GAME OVER")
 	get_tree().paused = true
