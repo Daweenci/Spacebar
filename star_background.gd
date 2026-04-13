@@ -14,7 +14,6 @@ func move_tiles():
 	
 	if bg.position.y == start_y + 720:
 		bg.position.y = start_y
-# Called every frame. 'delta' is the elapsed time since the previous frame.
 
 func _process(delta: float) -> void:
 	move_tiles()

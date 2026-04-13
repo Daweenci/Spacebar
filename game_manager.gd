@@ -79,6 +79,8 @@ var score = 0
 var reputation = 5
 var max_recipe_length = 10
 
+var input_locked = false
+
 
 func _ready():
 	update_score_ui()
@@ -283,7 +285,9 @@ func show_next_choices():
 
 
 func handle_selection(event):
-
+	if input_locked:
+		return
+		
 	if event.is_action_pressed("w"):
 		select_ingredient(0)
 
@@ -298,6 +302,11 @@ func handle_selection(event):
 
 
 func select_ingredient(index):
+	if input_locked:
+		return
+
+	input_locked = true
+	
 	if index >= current_choices.size():
 		return
 		
@@ -315,6 +324,8 @@ func select_ingredient(index):
 		finish_mixing()
 	else:
 		show_next_choices()
+
+	input_locked = false
 
 
 func show_recipe_ui():

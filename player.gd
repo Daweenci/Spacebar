@@ -14,10 +14,12 @@ var health = 5
 var is_invincible = false
 var invincibility_time = 2
 
+
 func _ready():
 	setup_lanes()
 	target_x = lanes[current_lane]
-	
+
+
 func setup_lanes():
 	var base_width = 1280 #projekt width
 	var left_offset = 640 #verschiebung um die Hälfte
@@ -35,7 +37,8 @@ func _process(delta):
 		game_manager.deliver()
 	handle_input()
 	position.x = move_toward(position.x, target_x, switch_speed * delta)
-	
+
+
 func handle_input():
 	if Input.is_action_just_pressed("left"):
 		current_lane = max(0, current_lane - 1)
