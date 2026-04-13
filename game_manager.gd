@@ -268,7 +268,6 @@ func show_next_choices():
 
 	var wrong_choices = pool.slice(0, 3)
 
-	# add correct
 	current_choices = wrong_choices
 	current_choices.append(correct)
 
