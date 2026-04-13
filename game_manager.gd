@@ -34,8 +34,6 @@ var ingredient_textures = {
 
 var slot_scene = preload("res://ingredient_slot.tscn")
 
-
-#recipe
 var possible_ingredients = ["apple", "orange", "banana", 
 "mango", "kiwi", "lemon", "watermelon"]
 
@@ -44,7 +42,7 @@ var player_input = []
 var recipe_length_start = 3
 var recipe_length = recipe_length_start
 
-var current_step = 0
+var current_step = 0 #beim Mixing
 var current_choices = []
 var selecting = false
 
@@ -52,8 +50,8 @@ var selecting = false
 var spawn_delay = 5.0
 var cooldown_time = 5.0
 
-var approach_time_max = 10.0
-var mixing_time_max = 30.0
+var approach_time_max = 6.0
+var mixing_time_max = 20.0
 
 var enter_offset_y = 400
 var exit_offset_y = -500
@@ -61,7 +59,7 @@ var exit_offset_y = -500
 var enter_random_x = 120
 var exit_random_x = 150
 
-var tween_duration = 0.5
+var tween_duration = 1 #wie lange der customer zum Ziel fliegt
 
 var customer_target_pos = Vector2(1200, 600)
 
@@ -262,18 +260,20 @@ func show_next_choices():
 	current_choices.clear()
 
 	var correct = current_recipe[current_step]
-	var correct_index = randi() % 4
 
-	for i in range(4):
-		if i == correct_index:
-			current_choices.append(correct)
-		else:
-			var wrong = possible_ingredients[randi() % possible_ingredients.size()]
-			while wrong == correct:
-				wrong = possible_ingredients[randi() % possible_ingredients.size()]
-			current_choices.append(wrong)
+	var pool = possible_ingredients.duplicate()
+	pool.erase(correct)
 
-	print("Correct:", correct)
+	pool.shuffle()
+
+	var wrong_choices = pool.slice(0, 3)
+
+	# add correct
+	current_choices = wrong_choices
+	current_choices.append(correct)
+
+	current_choices.shuffle()
+
 	print("Choices:", current_choices)
 
 	var slots = [slot_w, slot_a, slot_s, slot_d]
