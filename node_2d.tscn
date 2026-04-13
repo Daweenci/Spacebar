@@ -10,6 +10,8 @@
 [ext_resource type="Script" uid="uid://110t8slt34hp" path="res://game_manager.gd" id="7_d21ai"]
 [ext_resource type="Texture2D" uid="uid://bsvm1dppumhc8" path="res://Sprites/Clock_fill.png" id="8_ir8iy"]
 [ext_resource type="PackedScene" uid="uid://c0tsfytwx154q" path="res://ingredient_slot.tscn" id="9_ir8iy"]
+[ext_resource type="Texture2D" uid="uid://b06q4ebqsl14s" path="res://Sprites/health_empty.png" id="10_x0ka3"]
+[ext_resource type="Texture2D" uid="uid://ccsjxxw7coqmd" path="res://Sprites/health_full.png" id="11_0h7mo"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_kdubu"]
 radius = 35.0
@@ -89,6 +91,7 @@ offset_bottom = 328.0
 
 [node name="IngredientsContainer" type="Control" parent="UI" unique_id=511063971]
 layout_mode = 3
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 123.0
@@ -126,6 +129,25 @@ layout_mode = 2
 [node name="IngredientSlotS" parent="UI/IngredientsContainer/CenterContainer/VBoxContainer" unique_id=2076734103 instance=ExtResource("9_ir8iy")]
 layout_mode = 2
 size_flags_horizontal = 4
+
+[node name="ScoreLabel" type="Label" parent="UI" unique_id=1858744426]
+offset_left = 1141.0
+offset_top = 25.0
+offset_right = 1262.0
+offset_bottom = 70.0
+theme_override_font_sizes/font_size = 32
+text = "Score: 0"
+
+[node name="ReputationBar" type="TextureProgressBar" parent="UI" unique_id=474373579]
+offset_left = 648.0
+offset_top = 631.0
+offset_right = 750.0
+offset_bottom = 643.0
+scale = Vector2(1.2399951, 2.131654)
+max_value = 10.0
+value = 5.0
+texture_under = ExtResource("10_x0ka3")
+texture_progress = ExtResource("11_0h7mo")
 
 [node name="GameManager" type="Node" parent="." unique_id=126490208]
 script = ExtResource("7_d21ai")

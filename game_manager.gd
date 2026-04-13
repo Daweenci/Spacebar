@@ -29,6 +29,8 @@ var ingredient_textures = {
 @onready var slot_a = get_node("/root/Node2D/UI/IngredientsContainer/CenterContainer/VBoxContainer/HBoxContainer/IngredientSlotA")
 @onready var slot_s = get_node("/root/Node2D/UI/IngredientsContainer/CenterContainer/VBoxContainer/IngredientSlotS")
 @onready var slot_d = get_node("/root/Node2D/UI/IngredientsContainer/CenterContainer/VBoxContainer/HBoxContainer/IngredientSlotD")
+@onready var score_label = get_node("/root/Node2D/UI/ScoreLabel")
+@onready var reputation_bar = get_node("/root/Node2D/UI/ReputationBar")
 
 var slot_scene = preload("res://ingredient_slot.tscn")
 
@@ -73,8 +75,14 @@ var approach_timer_running = false
 var mixing_timer = 0.0
 var mixing_timer_running = false
 
+var pending_stars = 0
+var score = 0
+var reputation = 5
+
 
 func _ready():
+	update_score_ui()
+	update_reputation_ui()
 	await get_tree().create_timer(spawn_delay).timeout
 	start_customer()
 
@@ -145,7 +153,7 @@ func fail_customer():
 	ingredients_panel.visible = false
 	selecting = false
 
-	give_stars(1)
+	apply_result(1)
 
 	send_customer_away()
 	state = GameState.IDLE
@@ -153,10 +161,6 @@ func fail_customer():
 	hide_clock()
 	await get_tree().create_timer(cooldown_time).timeout
 	start_customer()
-
-
-func give_stars(amount):
-	print(amount)
 
 
 func accept_order():
@@ -196,6 +200,8 @@ func deliver():
 		return
 
 	mixing_timer_running = false
+	
+	apply_result(pending_stars)
 
 	send_customer_away()
 	state = GameState.RESULT
@@ -325,7 +331,11 @@ func show_recipe_ui():
 func finish_mixing():
 	selecting = false
 	ingredients_panel.visible = false
+
+	pending_stars = calculate_score()
+
 	state = GameState.DELIVERY
+
 	
 func highlight_slot(index):
 	var slots = [slot_w, slot_a, slot_s, slot_d]
@@ -334,3 +344,68 @@ func highlight_slot(index):
 		slots[i].modulate = Color(1, 1, 1)
 
 	slots[index].modulate = Color(1.5, 1.5, 1.5)
+	
+	
+func calculate_score():
+	var correct = 0
+
+	for i in range(recipe_length):
+		if player_input[i] == current_recipe[i]:
+			correct += 1
+
+	var percentage = (correct / float(recipe_length)) * 100
+
+	var stars = 1
+
+	if percentage >= 100:
+		stars = 5
+	elif percentage >= 80:
+		stars = 4
+	elif percentage >= 60:
+		stars = 3
+	elif percentage >= 40:
+		stars = 2
+	else:
+		stars = 1
+
+	return stars
+
+
+func apply_result(stars):
+	score += stars
+	update_score_ui()
+	
+	if stars == 5:
+		reputation += 2
+	elif stars == 4:
+		reputation += 1
+	elif stars == 3:
+		pass
+	elif stars == 2:
+		reputation -= 1
+	elif stars == 1:
+		reputation -= 2
+
+	reputation = clamp(reputation, 0, 10)
+	update_reputation_ui()
+
+	print("Stars:", stars)
+	print("Score:", score)
+	print("Reputation:", reputation)
+
+	if reputation <= 0:
+		game_over()
+		
+		
+func game_over():
+	print("GAME OVER")
+
+	get_tree().paused = true
+	
+	
+func update_score_ui():
+	score_label.text = "Score: " + str(score)
+
+
+func update_reputation_ui():
+	reputation_bar.value = reputation	
