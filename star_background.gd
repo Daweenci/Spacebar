@@ -12,7 +12,7 @@ func _ready() -> void:
 func move_tiles():
 	bg.position.y += 1
 	
-	if bg.position.y == start_y + 720:
+	if bg.position.y == start_y + 4320:
 		bg.position.y = start_y
 
 func _process(delta: float) -> void:

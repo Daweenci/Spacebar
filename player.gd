@@ -3,8 +3,9 @@ extends CharacterBody2D
 @onready var hp_label = get_node("/root/Node2D/UI/HP")
 @onready var game_manager = get_node("/root/Node2D/GameManager")
 
-@onready var sprite = $Sprite2D
+@onready var sprite = $AnimatedSprite2D
 
+var explosion_sound_path = "res://Sprites/explosion.wav"
 var lane_count = 4
 var lanes = []
 var current_lane = 2
@@ -22,6 +23,7 @@ var is_blinking = false
 func _ready():
 	setup_lanes()
 	target_x = lanes[current_lane]
+	sprite.play("default")
 
 
 func setup_lanes():
@@ -62,7 +64,8 @@ func _physics_process(delta):
 func take_damage():
 	if is_invincible:
 		return
-
+	
+	play_sound(explosion_sound_path)
 	health -= 1
 	print("Health:", health)
 	update_hp_ui()
@@ -103,8 +106,17 @@ func game_over():
 	get_tree().paused = true
 
 func update_hp_ui():
-	hp_label.text = "HP: " + str(health)
+	hp_label.text = "HP:" + str(health)
 
 func _on_hurtbox_area_entered(area: Area2D) -> void:
 	if area.is_in_group("obstacle"):
 		take_damage()
+		
+
+func play_sound(path):
+	var player = AudioStreamPlayer.new()
+	player.volume_db = -10
+	add_child(player)
+	player.stream = load(path)
+	player.play()
+	player.finished.connect(player.queue_free)

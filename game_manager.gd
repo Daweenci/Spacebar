@@ -10,13 +10,13 @@ enum GameState {
 }
 
 var ingredient_textures = {
-	"apple": preload("res://Sprites/Apple.png"),
-	"orange": preload("res://Sprites/Orange.png"),
-	"banana": preload("res://Sprites/Banana.png"),
-	"mango": preload("res://Sprites/Mango.png"),
-	"kiwi": preload("res://Sprites/Kiwi.png"),
-	"lemon": preload("res://Sprites/Lemon.png"),
-	"watermelon": preload("res://Sprites/Watermelon.png")
+	"space_fruit_1": preload("res://Sprites/SpaceFruit1.png"),
+	"space_fruit_2": preload("res://Sprites/SpaceFruit2.png"),
+	"space_fruit_3": preload("res://Sprites/SpaceFruit3.png"),
+	"space_fruit_4": preload("res://Sprites/SpaceFruit4.png"),
+	"space_fruit_5": preload("res://Sprites/SpaceFruit5.png"),
+	"space_fruit_6": preload("res://Sprites/SpaceFruit6.png"),
+	"space_fruit_7": preload("res://Sprites/SpaceFruit7.png")
 }
 
 @onready var customer = get_node("/root/Node2D/Customer")
@@ -34,8 +34,14 @@ var ingredient_textures = {
 
 var slot_scene = preload("res://ingredient_slot.tscn")
 
-var possible_ingredients = ["apple", "orange", "banana", 
-"mango", "kiwi", "lemon", "watermelon"]
+var possible_ingredients = ["space_fruit_1", "space_fruit_2", "space_fruit_3", 
+"space_fruit_4", "space_fruit_5", "space_fruit_6", "space_fruit_7"]
+
+var fly_sound = "res://Sprites/fly.wav"
+var fly_away_sound = "res://Sprites/fly_away.wav"
+@onready var warning_player = AudioStreamPlayer.new()
+var warning_playing = false
+var warning_threshold = 5.0
 
 var current_recipe = []
 var player_input = []
@@ -54,7 +60,7 @@ var approach_time_max = 6.0
 var mixing_time_max = 20.0
 
 var enter_offset_y = 400
-var exit_offset_y = -500
+var exit_offset_y = -1000
 
 var enter_random_x = 120
 var exit_random_x = 150
@@ -83,6 +89,9 @@ var input_locked = false
 
 
 func _ready():
+	add_child(warning_player)
+	warning_player.stream = load("res://Sprites/clock.wav")
+	warning_player.volume_db = -5
 	update_score_ui()
 	update_reputation_ui()
 	await get_tree().create_timer(spawn_delay).timeout
@@ -100,18 +109,28 @@ func _process(delta):
 		
 	if state == GameState.CLIENT_WAITING and approach_timer_running:
 		approach_timer -= delta
+		
+		if approach_timer <= warning_threshold and not warning_playing:
+			warning_player.play()
+			warning_playing = true
+		
 		if approach_timer <= 0:
 			fail_customer()
+
 
 	if (state == GameState.SHOW_RECIPE 
 	or state == GameState.MIXING 
 	or state == GameState.DELIVERY) and mixing_timer_running:
 		mixing_timer -= delta
+		if mixing_timer <= warning_threshold and not warning_playing:
+			warning_player.play()
+			warning_playing = true
 		if mixing_timer <= 0:
 			fail_customer()
 
 
 func start_customer():
+	play_sound(fly_sound)
 	state = GameState.CLIENT_WAITING
 
 	var random_x = randf_range(-enter_random_x, enter_random_x)
@@ -133,6 +152,7 @@ func start_customer():
 
 
 func send_customer_away():
+	play_sound(fly_away_sound)
 	var tween = create_tween()
 
 	var random_x = randf_range(-exit_random_x, exit_random_x)
@@ -148,6 +168,8 @@ func send_customer_away():
 
 
 func fail_customer():
+	warning_player.stop()
+	warning_playing = false
 	approach_timer_running = false
 	mixing_timer_running = false
 	
@@ -169,6 +191,8 @@ func accept_order():
 	if state != GameState.CLIENT_WAITING:
 		return
 
+	warning_player.stop()
+	warning_playing = false
 	approach_timer_running = false
 
 	mixing_timer = mixing_time_max
@@ -200,7 +224,9 @@ func start_mixing():
 func deliver():
 	if state != GameState.DELIVERY:
 		return
-
+		
+	warning_player.stop()
+	warning_playing = false
 	mixing_timer_running = false
 	
 	apply_result(pending_stars)
@@ -226,6 +252,8 @@ func show_clock():
 
 
 func hide_clock():
+	warning_player.stop()
+	warning_playing = false
 	var tween = create_tween()
 	tween.set_trans(Tween.TRANS_BACK)
 	tween.set_ease(Tween.EASE_IN)
@@ -418,7 +446,7 @@ func game_over():
 	
 	
 func update_score_ui():
-	score_label.text = "Score: " + str(score)
+	score_label.text = "Score:" + str(score)
 
 
 func update_reputation_ui():
@@ -432,3 +460,12 @@ func update_difficulty():
 		new_length = max_recipe_length
 
 	recipe_length = new_length
+
+
+func play_sound(path):
+	var player = AudioStreamPlayer.new()
+	player.volume_db = -10
+	add_child(player)
+	player.stream = load(path)
+	player.play()
+	player.finished.connect(player.queue_free)
