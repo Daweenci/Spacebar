@@ -28,8 +28,8 @@ func _ready():
 
 func setup_lanes():
 	var base_width = 1280 #projekt width
-	var left_offset = 640 #verschiebung um die Hälfte
-	var road_width = base_width * 0.5 - 128  #128 = 1280 * 0.1 weil die 5fte lane den Kunden gehört
+	var left_offset = 640 + 128 #verschiebung um die Hälfte
+	var road_width = base_width * 0.5 - 128 - 128  #128 = 1280 * 0.1 weil die 5fte lane den Kunden gehört
 	
 	var lane_width = road_width / lane_count
 	

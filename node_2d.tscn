@@ -11,7 +11,6 @@
 [ext_resource type="FontFile" uid="uid://bbmsrnr7nnbe7" path="res://Sprites/PixeloidMono-nAOpP.ttf" id="7_x0ka3"]
 [ext_resource type="PackedScene" uid="uid://c0tsfytwx154q" path="res://ingredient_slot.tscn" id="9_ir8iy"]
 [ext_resource type="Texture2D" uid="uid://b06q4ebqsl14s" path="res://Sprites/health_empty.png" id="10_x0ka3"]
-[ext_resource type="Texture2D" uid="uid://ccsjxxw7coqmd" path="res://Sprites/health_full.png" id="11_0h7mo"]
 [ext_resource type="AudioStream" uid="uid://dhqc5w7ahse0w" path="res://Sprites/cool-cat-blues-albert-behar-main-version-15574-01-44.wav" id="13_0h7mo"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_kdubu"]
@@ -59,6 +58,9 @@ load_path = "res://.godot/imported/Clock_background.png-dfd9d62f51be6fc16074d5a2
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_x0ka3"]
 load_path = "res://.godot/imported/Clock_fill.png-3428530ad3e3ad2fc578b5f593741f66.ctex"
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_0h7mo"]
+load_path = "res://.godot/imported/health_full.png-44624cc602b0f2332817c2f352a54eea.ctex"
 
 [node name="Node2D" type="Node2D" unique_id=659122761]
 
@@ -186,15 +188,22 @@ theme_override_font_sizes/font_size = 32
 text = "Score:0"
 
 [node name="ReputationBar" type="TextureProgressBar" parent="UI" unique_id=474373579]
-offset_left = 648.0
-offset_top = 631.0
-offset_right = 750.0
-offset_bottom = 643.0
-scale = Vector2(1.2399951, 2.131654)
+offset_left = 653.00006
+offset_top = 630.0
+offset_right = 755.00006
+offset_bottom = 642.0
+scale = Vector2(1.007449, 2.131654)
 max_value = 10.0
+step = 0.1
 value = 5.0
 texture_under = ExtResource("10_x0ka3")
-texture_progress = ExtResource("11_0h7mo")
+texture_progress = SubResource("CompressedTexture2D_0h7mo")
+
+[node name="ReputationSprite" type="TextureRect" parent="UI" unique_id=1709238631]
+offset_left = 758.0
+offset_top = 629.0
+offset_right = 786.0
+offset_bottom = 658.0
 
 [node name="GameManager" type="Node" parent="." unique_id=126490208]
 script = ExtResource("7_d21ai")

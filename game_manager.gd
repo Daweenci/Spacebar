@@ -23,6 +23,14 @@ var ingredient_textures = {
 	"space_fruit_11": preload("res://Sprites/SpaceFruit11.png")
 }
 
+var rep_textures = [
+	preload("res://Sprites/bad_rep.png"),        # 0
+	preload("res://Sprites/mid_bad_rep.png"),    # 1
+	preload("res://Sprites/mid_rep.png"),        # 2
+	preload("res://Sprites/mid_good_rep.png"),   # 3
+	preload("res://Sprites/good_rep.png")        # 4
+]
+
 @onready var customer = get_node("/root/Node2D/Customer")
 @onready var clock = get_node("/root/Node2D/UI/Clock")
 @onready var recipe_container = get_node("/root/Node2D/UI/RecipePanel/HFlowContainer")
@@ -35,6 +43,7 @@ var ingredient_textures = {
 @onready var slot_d = get_node("/root/Node2D/UI/IngredientsContainer/CenterContainer/VBoxContainer/HBoxContainer/IngredientSlotD")
 @onready var score_label = get_node("/root/Node2D/UI/ScoreLabel")
 @onready var reputation_bar = get_node("/root/Node2D/UI/ReputationBar")
+@onready var reputation_sprite = get_node("/root/Node2D/UI/ReputationSprite")
 
 var slot_scene = preload("res://ingredient_slot.tscn")
 
@@ -91,9 +100,14 @@ var reputation = 5
 var max_recipe_length = 10
 
 var input_locked = false
+var reputation_tween
+var current_rep_state = 2
 
 
 func _ready():
+	reputation_sprite.texture = rep_textures[current_rep_state]
+	await get_tree().process_frame
+	reputation_sprite.pivot_offset = Vector2(0, reputation_sprite.size.y)
 	add_child(warning_player)
 	warning_player.stream = load("res://Sprites/clock.wav")
 	warning_player.volume_db = -5
@@ -457,8 +471,26 @@ func update_score_ui():
 
 
 func update_reputation_ui():
-	reputation_bar.value = reputation
-	
+	if reputation_tween:
+		reputation_tween.kill()
+
+	reputation_tween = create_tween()
+	reputation_tween.set_trans(Tween.TRANS_SINE)
+	reputation_tween.set_ease(Tween.EASE_IN_OUT)
+
+	reputation_tween.tween_property(reputation_bar, "value", reputation, 1.5)
+
+	var t = reputation / 10.0
+
+	var color: Color
+	if t < 0.5:
+		color = Color.RED.lerp(Color(1.0, 0.8, 0.2), t * 2.0)
+	else:
+		color = Color(1.0, 0.8, 0.2).lerp(Color.GREEN, (t - 0.5) * 2.0)
+
+	reputation_bar.tint_progress = color
+	update_reputation_sprite()
+
 
 func update_difficulty():
 	var new_length = recipe_length_start + int(score / 10)
@@ -476,3 +508,42 @@ func play_sound(path):
 	player.stream = load(path)
 	player.play()
 	player.finished.connect(player.queue_free)
+	
+
+func get_rep_state(rep):
+	if rep <= 2:
+		return 0
+	elif rep <= 4:
+		return 1
+	elif rep <= 6:
+		return 2
+	elif rep <= 8:
+		return 3
+	else:
+		return 4
+		
+func update_reputation_sprite():
+	var new_state = get_rep_state(reputation)
+
+	if new_state == current_rep_state:
+		return
+
+	current_rep_state = new_state
+	play_rep_transition(new_state)
+
+
+func play_rep_transition(new_state):
+	var tween = create_tween()
+	tween.set_trans(Tween.TRANS_BACK)
+	tween.set_ease(Tween.EASE_OUT)
+
+	# zoom in
+	tween.tween_property(reputation_sprite, "scale", Vector2(1.3, 1.3), 0.4)
+
+	# switch sprite
+	tween.tween_callback(func():
+		reputation_sprite.texture = rep_textures[new_state]
+	)
+
+	# zoom out
+	tween.tween_property(reputation_sprite, "scale", Vector2(1, 1), 0.4)

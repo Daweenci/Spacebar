@@ -10,8 +10,8 @@ func _ready():
 
 func setup_lanes():
 	var base_width = 1280
-	var left_offset = 640
-	var road_width = base_width * 0.5 - 128
+	var left_offset = 640 + 128
+	var road_width = base_width * 0.5 - 128 -128
 	
 	var lane_width = road_width / lane_count
 	
