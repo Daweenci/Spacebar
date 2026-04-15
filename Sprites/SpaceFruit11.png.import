@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dinsf6cobukse"
-path="res://.godot/imported/SpaceFruit7.png-c3c42a89d6dcde8b26018183f714a36e.ctex"
+uid="uid://cqsc6dkbudid"
+path="res://.godot/imported/SpaceFruit11.png-28a7c48f25c7e3c86fcbf3f482306694.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Sprites/SpaceFruit7.png"
-dest_files=["res://.godot/imported/SpaceFruit7.png-c3c42a89d6dcde8b26018183f714a36e.ctex"]
+source_file="res://Sprites/SpaceFruit11.png"
+dest_files=["res://.godot/imported/SpaceFruit11.png-28a7c48f25c7e3c86fcbf3f482306694.ctex"]
 
 [params]
 

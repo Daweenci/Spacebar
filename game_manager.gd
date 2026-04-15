@@ -16,7 +16,11 @@ var ingredient_textures = {
 	"space_fruit_4": preload("res://Sprites/SpaceFruit4.png"),
 	"space_fruit_5": preload("res://Sprites/SpaceFruit5.png"),
 	"space_fruit_6": preload("res://Sprites/SpaceFruit6.png"),
-	"space_fruit_7": preload("res://Sprites/SpaceFruit7.png")
+	"space_fruit_7": preload("res://Sprites/SpaceFruit7.png"),
+	"space_fruit_8": preload("res://Sprites/SpaceFruit8.png"),
+	"space_fruit_9": preload("res://Sprites/SpaceFruit9.png"),
+	"space_fruit_10": preload("res://Sprites/SpaceFruit10.png"),
+	"space_fruit_11": preload("res://Sprites/SpaceFruit11.png")
 }
 
 @onready var customer = get_node("/root/Node2D/Customer")
@@ -35,7 +39,8 @@ var ingredient_textures = {
 var slot_scene = preload("res://ingredient_slot.tscn")
 
 var possible_ingredients = ["space_fruit_1", "space_fruit_2", "space_fruit_3", 
-"space_fruit_4", "space_fruit_5", "space_fruit_6", "space_fruit_7"]
+"space_fruit_4", "space_fruit_5", "space_fruit_6", "space_fruit_7", "space_fruit_8",
+"space_fruit_9", "space_fruit_10", "space_fruit_11"]
 
 var fly_sound = "res://Sprites/fly.wav"
 var fly_away_sound = "res://Sprites/fly_away.wav"
@@ -269,9 +274,11 @@ func hide_clock():
 func generate_recipe():
 	current_recipe.clear()
 
+	var pool = possible_ingredients.duplicate()
+	pool.shuffle()
+
 	for i in range(recipe_length):
-		var ingredient = possible_ingredients[randi() % possible_ingredients.size()]
-		current_recipe.append(ingredient)
+		current_recipe.append(pool[i])
 
 	print("Recipe:", current_recipe)
 
