@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cbjnnnxbv5xo0"
-path="res://.godot/imported/Stars_background.png-d178417bb40954dd43b76b3c19615334.ctex"
+uid="uid://4hxckbx4oomi"
+path="res://.godot/imported/Asteroid3.png-a1e0800ce27d8505b7da3aef1945e668.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Sprites/Stars_background.png"
-dest_files=["res://.godot/imported/Stars_background.png-d178417bb40954dd43b76b3c19615334.ctex"]
+source_file="res://Sprites/Asteroid3.png"
+dest_files=["res://.godot/imported/Asteroid3.png-a1e0800ce27d8505b7da3aef1945e668.ctex"]
 
 [params]
 

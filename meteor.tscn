@@ -1,6 +1,5 @@
 [gd_scene format=3 uid="uid://cru8gqkg8vfyn"]
 
-[ext_resource type="Texture2D" uid="uid://cq4pfybv3f18f" path="res://icon.svg" id="1_n51xl"]
 [ext_resource type="Script" uid="uid://d6q1p7kcenp4" path="res://meteor.gd" id="1_ohe0j"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_rj586"]
@@ -13,5 +12,4 @@ script = ExtResource("1_ohe0j")
 shape = SubResource("CircleShape2D_rj586")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=560342437]
-scale = Vector2(0.5, 0.4921875)
-texture = ExtResource("1_n51xl")
+scale = Vector2(2, 2)

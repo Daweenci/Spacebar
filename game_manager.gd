@@ -20,7 +20,8 @@ var ingredient_textures = {
 	"space_fruit_8": preload("res://Sprites/SpaceFruit8.png"),
 	"space_fruit_9": preload("res://Sprites/SpaceFruit9.png"),
 	"space_fruit_10": preload("res://Sprites/SpaceFruit10.png"),
-	"space_fruit_11": preload("res://Sprites/SpaceFruit11.png")
+	"space_fruit_11": preload("res://Sprites/SpaceFruit11.png"),
+	"space_fruit_12": preload("res://Sprites/SpaceFruit12.png")
 }
 
 var rep_textures = [
@@ -49,7 +50,7 @@ var slot_scene = preload("res://ingredient_slot.tscn")
 
 var possible_ingredients = ["space_fruit_1", "space_fruit_2", "space_fruit_3", 
 "space_fruit_4", "space_fruit_5", "space_fruit_6", "space_fruit_7", "space_fruit_8",
-"space_fruit_9", "space_fruit_10", "space_fruit_11"]
+"space_fruit_9", "space_fruit_10", "space_fruit_11", "space_fruit_12"]
 
 var fly_sound = "res://Sprites/fly.wav"
 var fly_away_sound = "res://Sprites/fly_away.wav"
@@ -103,8 +104,12 @@ var input_locked = false
 var reputation_tween
 var current_rep_state = 2
 
+var customer_animations = ["customer1", "customer2", "customer3", "customer4", "customer5"]
+var current_customer_index = 0
+
 
 func _ready():
+	customer.scale = Vector2(2, 2)
 	reputation_sprite.texture = rep_textures[current_rep_state]
 	await get_tree().process_frame
 	reputation_sprite.pivot_offset = Vector2(0, reputation_sprite.size.y)
@@ -149,6 +154,12 @@ func _process(delta):
 
 
 func start_customer():
+	var anim = customer_animations[current_customer_index]
+	customer.play(anim)
+
+	current_customer_index += 1
+	if current_customer_index >= customer_animations.size():
+		current_customer_index = 0
 	play_sound(fly_sound)
 	state = GameState.CLIENT_WAITING
 
@@ -537,13 +548,10 @@ func play_rep_transition(new_state):
 	tween.set_trans(Tween.TRANS_BACK)
 	tween.set_ease(Tween.EASE_OUT)
 
-	# zoom in
 	tween.tween_property(reputation_sprite, "scale", Vector2(1.3, 1.3), 0.4)
 
-	# switch sprite
 	tween.tween_callback(func():
 		reputation_sprite.texture = rep_textures[new_state]
 	)
 
-	# zoom out
 	tween.tween_property(reputation_sprite, "scale", Vector2(1, 1), 0.4)
