@@ -1,5 +1,7 @@
 extends CharacterBody2D
 
+signal died
+
 @onready var hp_label = get_node("/root/Node2D/UI/HP")
 @onready var game_manager = get_node("/root/Node2D/GameManager")
 
@@ -102,8 +104,8 @@ func blink():
 		
 
 func game_over():
-	print("GAME OVER")
-	get_tree().paused = true
+	print("PLAYER DIED")
+	emit_signal("died")
 
 func update_hp_ui():
 	hp_label.text = "HP:" + str(health)

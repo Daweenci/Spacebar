@@ -924,5 +924,72 @@ position = Vector2(1, -7)
 scale = Vector2(2, 2)
 sprite_frames = SubResource("SpriteFrames_k73cj")
 
+[node name="GameOver" type="CanvasLayer" parent="." unique_id=1462034262]
+process_mode = 3
+
+[node name="GameOverPanel" type="Control" parent="GameOver" unique_id=312496719]
+process_mode = 3
+visible = false
+z_index = 7
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.48, 0.8400009)
+
+[node name="TitleLabel" type="Label" parent="GameOver/GameOverPanel" unique_id=1338143782]
+layout_mode = 0
+offset_left = 962.5
+offset_top = 128.57129
+offset_right = 1730.5
+offset_bottom = 285.5713
+theme_override_fonts/font = ExtResource("7_x0ka3")
+theme_override_font_sizes/font_size = 128
+text = "GAME OVER"
+
+[node name="HighscoreLabel" type="Label" parent="GameOver/GameOverPanel" unique_id=829543055]
+layout_mode = 0
+offset_left = 1114.5833
+offset_top = 402.38052
+offset_right = 1626.5833
+offset_bottom = 481.38052
+theme_override_fonts/font = ExtResource("7_x0ka3")
+theme_override_font_sizes/font_size = 64
+text = "Highscore: x"
+
+[node name="ScoreLabel" type="Label" parent="GameOver/GameOverPanel" unique_id=924233335]
+layout_mode = 0
+offset_left = 1156.25
+offset_top = 297.6187
+offset_right = 1497.25
+offset_bottom = 376.6187
+theme_override_fonts/font = ExtResource("7_x0ka3")
+theme_override_font_sizes/font_size = 64
+text = "Score: x"
+
+[node name="Retry" type="Button" parent="GameOver/GameOverPanel" unique_id=525466324]
+layout_mode = 0
+offset_left = 1229.1666
+offset_top = 520.23755
+offset_right = 1450.1666
+offset_bottom = 607.23755
+theme_override_fonts/font = ExtResource("7_x0ka3")
+theme_override_font_sizes/font_size = 64
+text = "Retry"
+
+[node name="Exit" type="Button" parent="GameOver/GameOverPanel" unique_id=349715002]
+layout_mode = 0
+offset_left = 1254.1666
+offset_top = 629.7612
+offset_right = 1433.1666
+offset_bottom = 716.7612
+theme_override_fonts/font = ExtResource("7_x0ka3")
+theme_override_font_sizes/font_size = 64
+text = "Exit"
+
 [connection signal="timeout" from="MeteorTimer" to="MeteorSpawner" method="_on_meteor_timer_timeout"]
 [connection signal="area_entered" from="Player/Hurtbox" to="Player" method="_on_hurtbox_area_entered"]
+[connection signal="pressed" from="GameOver/GameOverPanel/Retry" to="GameManager" method="_on_retry_button_pressed"]
+[connection signal="pressed" from="GameOver/GameOverPanel/Exit" to="GameManager" method="_on_exit_button_pressed"]

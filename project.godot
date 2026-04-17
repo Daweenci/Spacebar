@@ -15,6 +15,10 @@ run/main_scene="res://node_2d.tscn"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 config/icon="res://icon.svg"
 
+[autoload]
+
+Global="*uid://b4qm38j2ljf5y"
+
 [display]
 
 window/size/viewport_width=1280

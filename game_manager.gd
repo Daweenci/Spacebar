@@ -57,6 +57,8 @@ var rep_textures = [
 @onready var stars_container = result_panel.get_node("Stars")
 @onready var correct_container = result_panel.get_node("VBoxContainer/CorrectRecipe")
 @onready var player_container = result_panel.get_node("VBoxContainer/PlayerRecipe")
+@onready var game_over_panel = get_node("/root/Node2D/GameOver/GameOverPanel")
+@onready var player = get_node("/root/Node2D/Player")
 
 var brew_animating = false
 
@@ -84,7 +86,7 @@ var selecting = false
 
 # config
 var spawn_delay = 5.0
-var cooldown_time = 8.0
+var cooldown_time = 5.0
 
 var approach_time_max = 6.0
 var mixing_time_max = 20.0
@@ -95,7 +97,7 @@ var exit_offset_y = -1000
 var enter_random_x = 120
 var exit_random_x = 150
 
-var tween_duration = 1 #wie lange der customer zum Ziel fliegt
+var tween_duration = 1
 
 var customer_target_pos = Vector2(1200, 600)
 
@@ -134,7 +136,21 @@ var glass_animating = false
 var result_base_y
 var result_visible_y = 360
 
+var dark_overlay: ColorRect
+
 func _ready():
+	dark_overlay = ColorRect.new()
+	dark_overlay.color = Color(0, 0, 0, 0.6)
+	dark_overlay.visible = false
+
+	dark_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+
+	var ui_root = get_node("/root/Node2D/UI")
+	ui_root.add_child(dark_overlay)
+
+	dark_overlay.z_index = 100
+	game_over_panel.z_index = 101
+	player.died.connect(game_over)
 	await get_tree().process_frame
 	result_base_y = result_panel.position.y
 	cauldron_anim.animation_finished.connect(_on_brew_finished)
@@ -609,9 +625,34 @@ func apply_result(stars):
 		
 		
 func game_over():
-	print("GAME OVER")
+	dark_overlay.visible = true
+	print("GAME OVER CALLED")
+
+	if score > Global.highscore:
+		Global.highscore = score
+
+	var score_label = game_over_panel.get_node("ScoreLabel")
+	var highscore_label = game_over_panel.get_node("HighscoreLabel")
+
+	score_label.text = "Score: " + str(score)
+	highscore_label.text = "Highscore: " + str(Global.highscore)
+
+	game_over_panel.visible = true
+
+	await get_tree().process_frame
 
 	get_tree().paused = true
+	
+	
+func _on_retry_button_pressed():
+	dark_overlay.visible = false
+	get_tree().paused = false
+	get_tree().reload_current_scene()
+
+func _on_exit_button_pressed():
+	dark_overlay.visible = false
+	get_tree().paused = false
+	get_tree().quit()
 	
 	
 func update_score_ui():
@@ -946,3 +987,7 @@ func show_recipe_comparison():
 			player_slot.add_child(cross)
 
 		player_container.add_child(player_slot)
+
+
+func _on_exit_pressed() -> void:
+	pass # Replace with function body.
