@@ -45,8 +45,15 @@ var rep_textures = [
 @onready var score_label = get_node("/root/Node2D/UI/ScoreLabel")
 @onready var reputation_bar = get_node("/root/Node2D/UI/ReputationBar")
 @onready var reputation_sprite = get_node("/root/Node2D/UI/ReputationSprite")
-@onready var cauldron = get_node("/root/Node2D/UI/CauldronWrapper")
+@onready var cauldron = get_node("/root/Node2D/CauldronWrapper")
 @onready var glass = get_node("/root/Node2D/BeerWrapper")
+@onready var glass_full = get_node("/root/Node2D/BeerWrapper/Full")
+@onready var glass_empty = get_node("/root/Node2D/BeerWrapper/Empty")
+@onready var glass_anim = get_node("/root/Node2D/BeerWrapper/Animation")
+@onready var cauldron_anim = get_node("/root/Node2D/CauldronWrapper/BrewAnim")
+@onready var cauldron_front = get_node("/root/Node2D/CauldronWrapper/CauldronFront")
+
+var brew_animating = false
 
 var slot_scene = preload("res://ingredient_slot.tscn")
 
@@ -115,9 +122,14 @@ var recipe_base_y
 var recipe_visible_y = 720
 
 var paper_texture = preload("res://Sprites/Schriftrolle.png")
-
+var glass_is_full = false
+var glass_animating = false
 
 func _ready():
+	cauldron_anim.animation_finished.connect(_on_brew_finished)
+	glass_empty.visible = true
+	glass_full.visible = false
+	glass_anim.visible = false
 	await get_tree().process_frame
 	recipe_base_y = recipe_panel.position.y
 	customer.scale = Vector2(2, 2)
@@ -287,7 +299,20 @@ func deliver():
 	warning_player.stop()
 	warning_playing = false
 	mixing_timer_running = false
+
+	if glass_animating:
+		glass_anim.stop()
+		glass_anim.visible = false
+		glass_full.visible = true
+		glass_is_full = true
+		glass_animating = false
 	
+	if brew_animating:
+		stop_brew_animation()
+	
+	hide_cauldron()
+	hide_glass()
+
 	apply_result(pending_stars)
 
 	send_customer_away()
@@ -475,7 +500,8 @@ func finish_mixing():
 	ingredients_panel.visible = false
 
 	pending_stars = calculate_score()
-
+	fill_glass()
+	play_brew_animation()
 	state = GameState.DELIVERY
 
 	
@@ -652,3 +678,76 @@ func show_glass():
 	tween.set_ease(Tween.EASE_OUT)
 
 	tween.tween_property(glass, "position:x", target_x, 0.6)
+
+
+func fill_glass():
+	glass_animating = true
+
+	glass_empty.visible = true
+	glass_full.visible = false
+	glass_anim.visible = true
+
+	glass_anim.play("fill")
+
+	await glass_anim.animation_finished
+
+	glass_anim.visible = false
+	glass_empty.visible = false
+	glass_full.visible = true
+
+	glass_is_full = true
+	glass_animating = false
+
+func hide_cauldron():
+	var target_x = -300
+
+	var tween = create_tween()
+	tween.set_trans(Tween.TRANS_SINE)
+	tween.set_ease(Tween.EASE_IN)
+
+	tween.tween_property(cauldron, "position:x", target_x, 0.5)
+	
+func hide_glass():
+	var target_x = 700
+
+	var tween = create_tween()
+	tween.set_trans(Tween.TRANS_SINE)
+	tween.set_ease(Tween.EASE_IN)
+
+	tween.tween_property(glass, "position:x", target_x, 0.5)
+
+	tween.finished.connect(func():
+		reset_glass()
+	)
+	
+func reset_glass():
+	glass_anim.stop()
+	glass_anim.visible = false
+
+	glass_empty.visible = true
+	glass_full.visible = false
+
+	glass_is_full = false
+	glass.visible = false
+
+
+func play_brew_animation():
+	brew_animating = true
+	
+	cauldron_anim.visible = true
+	cauldron_anim.play("brew")
+	
+	cauldron_front.visible = false
+
+
+func stop_brew_animation():
+	brew_animating = false
+	
+	cauldron_anim.stop()
+	cauldron_anim.visible = false
+	
+	cauldron_front.visible = true
+
+func _on_brew_finished():
+	if brew_animating:
+		stop_brew_animation()
