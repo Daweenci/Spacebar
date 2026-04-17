@@ -55,6 +55,8 @@ var rep_textures = [
 @onready var drop_point = get_node("/root/Node2D/CauldronWrapper/IngredientDropPoint")
 @onready var result_panel = get_node("/root/Node2D/UI/ResultPanel")
 @onready var stars_container = result_panel.get_node("Stars")
+@onready var correct_container = result_panel.get_node("VBoxContainer/CorrectRecipe")
+@onready var player_container = result_panel.get_node("VBoxContainer/PlayerRecipe")
 
 var brew_animating = false
 
@@ -74,6 +76,7 @@ var current_recipe = []
 var player_input = []
 var recipe_length_start = 3
 var recipe_length = recipe_length_start
+var round_recipe_length = 3
 
 var current_step = 0 #beim Mixing
 var current_choices = []
@@ -81,7 +84,7 @@ var selecting = false
 
 # config
 var spawn_delay = 5.0
-var cooldown_time = 5.0
+var cooldown_time = 8.0
 
 var approach_time_max = 6.0
 var mixing_time_max = 20.0
@@ -375,7 +378,9 @@ func generate_recipe():
 	var pool = possible_ingredients.duplicate()
 	pool.shuffle()
 
-	for i in range(recipe_length):
+	round_recipe_length = recipe_length
+
+	for i in range(round_recipe_length):
 		current_recipe.append(pool[i])
 
 	print("Recipe:", current_recipe)
@@ -539,11 +544,11 @@ func highlight_slot(index):
 func calculate_score():
 	var correct = 0
 
-	for i in range(recipe_length):
+	for i in range(round_recipe_length):
 		if player_input[i] == current_recipe[i]:
 			correct += 1
 
-	var percentage = (correct / float(recipe_length)) * 100
+	var percentage = (correct / float(round_recipe_length)) * 100
 
 	var stars = 1
 
@@ -811,7 +816,7 @@ func show_result_panel():
 	var tween = create_tween()
 	tween.set_trans(Tween.TRANS_CUBIC)
 	tween.set_ease(Tween.EASE_OUT)
-
+	show_recipe_comparison()
 	tween.tween_property(result_panel, "position:y", result_visible_y, 0.8)
 
 	tween.parallel().tween_property(result_panel, "scale", Vector2(1, 1), 0.8)
@@ -867,3 +872,68 @@ func hide_result_panel():
 
 	await tween.finished
 	result_panel.visible = false
+
+
+func show_recipe_comparison():
+	for c in correct_container.get_children():
+		c.queue_free()
+	for c in player_container.get_children():
+		c.queue_free()
+
+	for i in range(round_recipe_length):
+		var correct = current_recipe[i]
+		var player = player_input[i]
+
+		# --- CORRECT SLOT ---
+		var correct_slot = slot_scene.instantiate()
+		correct_slot.custom_minimum_size = Vector2(48, 48)
+		correct_slot.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+
+		var tex2 = correct_slot.get_node("TextureRect")
+		tex2.texture = ingredient_textures[correct]
+
+		# 🔑 FORCE TEXTURE TO FIT SLOT
+		tex2.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		tex2.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		tex2.anchor_left = 0
+		tex2.anchor_top = 0
+		tex2.anchor_right = 1
+		tex2.anchor_bottom = 1
+		tex2.offset_left = 0
+		tex2.offset_top = 0
+		tex2.offset_right = 0
+		tex2.offset_bottom = 0
+
+		correct_container.add_child(correct_slot)
+
+		# --- PLAYER SLOT ---
+		var player_slot = slot_scene.instantiate()
+		player_slot.custom_minimum_size = Vector2(48, 48)
+		player_slot.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+
+		var tex = player_slot.get_node("TextureRect")
+		tex.texture = ingredient_textures[player]
+
+		# 🔑 SAME FIX HERE
+		tex.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		tex.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		tex.anchor_left = 0
+		tex.anchor_top = 0
+		tex.anchor_right = 1
+		tex.anchor_bottom = 1
+		tex.offset_left = 0
+		tex.offset_top = 0
+		tex.offset_right = 0
+		tex.offset_bottom = 0
+
+		# --- CROSS FOR WRONG ---
+		if player != correct:
+			var cross = Label.new()
+			cross.text = "✖"
+			cross.scale = Vector2(1.2, 1.2)
+			cross.modulate = Color(1, 0, 0)
+			cross.position = Vector2(2, 2)
+
+			player_slot.add_child(cross)
+
+		player_container.add_child(player_slot)
