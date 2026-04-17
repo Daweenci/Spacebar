@@ -165,7 +165,7 @@ func _ready():
 	reputation_sprite.pivot_offset = Vector2(0, reputation_sprite.size.y)
 	add_child(warning_player)
 	warning_player.stream = load("res://Sprites/clock.wav")
-	warning_player.volume_db = -5
+	warning_player.volume_db = -20
 	update_score_ui()
 	update_reputation_ui()
 	await get_tree().create_timer(spawn_delay).timeout
@@ -692,7 +692,7 @@ func update_difficulty():
 
 func play_sound(path):
 	var player = AudioStreamPlayer.new()
-	player.volume_db = -10
+	player.volume_db = -28
 	add_child(player)
 	player.stream = load(path)
 	player.play()

@@ -607,7 +607,7 @@ script = ExtResource("7_d21ai")
 
 [node name="MainTheme" type="AudioStreamPlayer" parent="." unique_id=1196903775]
 stream = ExtResource("13_0h7mo")
-volume_db = -10.0
+volume_db = -30.0
 autoplay = true
 
 [node name="BarBackground" type="Node2D" parent="." unique_id=714968556]

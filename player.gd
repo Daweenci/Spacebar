@@ -117,7 +117,7 @@ func _on_hurtbox_area_entered(area: Area2D) -> void:
 
 func play_sound(path):
 	var player = AudioStreamPlayer.new()
-	player.volume_db = -10
+	player.volume_db = -30
 	add_child(player)
 	player.stream = load(path)
 	player.play()
