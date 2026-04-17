@@ -53,6 +53,8 @@ var rep_textures = [
 @onready var cauldron_anim = get_node("/root/Node2D/CauldronWrapper/BrewAnim")
 @onready var cauldron_front = get_node("/root/Node2D/CauldronWrapper/CauldronFront")
 @onready var drop_point = get_node("/root/Node2D/CauldronWrapper/IngredientDropPoint")
+@onready var result_panel = get_node("/root/Node2D/UI/ResultPanel")
+@onready var stars_container = result_panel.get_node("Stars")
 
 var brew_animating = false
 
@@ -126,7 +128,12 @@ var paper_texture = preload("res://Sprites/Schriftrolle.png")
 var glass_is_full = false
 var glass_animating = false
 
+var result_base_y
+var result_visible_y = 360
+
 func _ready():
+	await get_tree().process_frame
+	result_base_y = result_panel.position.y
 	cauldron_anim.animation_finished.connect(_on_brew_finished)
 	glass_empty.visible = true
 	glass_full.visible = false
@@ -300,6 +307,7 @@ func deliver():
 	warning_player.stop()
 	warning_playing = false
 	mixing_timer_running = false
+	hide_clock()
 
 	if glass_animating:
 		glass_anim.stop()
@@ -318,9 +326,19 @@ func deliver():
 
 	send_customer_away()
 	state = GameState.RESULT
+	selecting = false
 	
-	hide_clock()
-	await get_tree().create_timer(cooldown_time).timeout
+	await get_tree().create_timer(0.5).timeout
+
+	show_result_panel()
+
+	var result_duration = max(cooldown_time - 1.0, 0.5)
+	await get_tree().create_timer(result_duration).timeout
+
+	hide_result_panel()
+
+	await get_tree().create_timer(1.0).timeout
+
 	start_customer()
 
 
@@ -780,3 +798,72 @@ func drop_ingredient(texture):
 	tween.finished.connect(func():
 		sprite.queue_free()
 	)
+
+
+func show_result_panel():
+	result_panel.visible = true
+	
+	result_panel.position.y = result_base_y
+
+	result_panel.scale = Vector2(0.8, 0.8)
+	result_panel.modulate.a = 0.0
+
+	var tween = create_tween()
+	tween.set_trans(Tween.TRANS_CUBIC)
+	tween.set_ease(Tween.EASE_OUT)
+
+	tween.tween_property(result_panel, "position:y", result_visible_y, 0.8)
+
+	tween.parallel().tween_property(result_panel, "scale", Vector2(1, 1), 0.8)
+	tween.parallel().tween_property(result_panel, "modulate:a", 1.0, 0.8)
+
+	var stars = stars_container.get_children()
+	for star in stars:
+		var empty = star.get_node("Empty")
+		var full = star.get_node("Full")
+
+		full.stop()
+		full.frame = 0
+
+		empty.visible = true
+		full.visible = false
+
+	await tween.finished
+	await get_tree().create_timer(0.3).timeout
+
+	await animate_stars(pending_stars)
+
+
+func animate_stars(amount):
+	var stars = stars_container.get_children()
+
+	for i in range(amount):
+		var star = stars[i]
+		var empty = star.get_node("Empty")
+		var full = star.get_node("Full")
+
+		empty.visible = false
+		full.visible = true
+
+		full.scale = Vector2(0, 0)
+
+		full.play("default")
+
+		var tween = create_tween()
+		tween.set_trans(Tween.TRANS_BACK)
+		tween.set_ease(Tween.EASE_OUT)
+
+		tween.tween_property(full, "scale", Vector2(1.2, 1.2), 0.4)
+		tween.tween_property(full, "scale", Vector2(1, 1), 0.2)
+
+		await tween.finished
+
+func hide_result_panel():
+	var tween = create_tween()
+	tween.set_trans(Tween.TRANS_CUBIC)
+	tween.set_ease(Tween.EASE_IN)
+
+	tween.tween_property(result_panel, "position:y", result_base_y, 0.4)
+
+	await tween.finished
+	result_panel.visible = false

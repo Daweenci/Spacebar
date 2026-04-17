@@ -9,7 +9,9 @@
 [ext_resource type="Texture2D" uid="uid://dd841i8r2n7oq" path="res://Sprites/glass_animation.png" id="6_e8dv2"]
 [ext_resource type="Script" uid="uid://110t8slt34hp" path="res://game_manager.gd" id="7_d21ai"]
 [ext_resource type="FontFile" uid="uid://bbmsrnr7nnbe7" path="res://Sprites/PixeloidMono-nAOpP.ttf" id="7_x0ka3"]
+[ext_resource type="Texture2D" uid="uid://co265fw030jv2" path="res://Sprites/empty_star.png" id="8_gt76g"]
 [ext_resource type="Texture2D" uid="uid://b66hsru24ggcs" path="res://Sprites/Schriftrolle.png" id="8_k73cj"]
+[ext_resource type="Texture2D" uid="uid://d3f088rgw2qio" path="res://Sprites/stars.png" id="9_1fr6y"]
 [ext_resource type="PackedScene" uid="uid://c0tsfytwx154q" path="res://ingredient_slot.tscn" id="9_ir8iy"]
 [ext_resource type="Texture2D" uid="uid://b06q4ebqsl14s" path="res://Sprites/health_empty.png" id="10_x0ka3"]
 [ext_resource type="Texture2D" uid="uid://brbmpisl1qa2a" path="res://Sprites/Brew_back.png" id="11_fs4d3"]
@@ -33,6 +35,56 @@ load_path = "res://.godot/imported/Clock_fill.png-3428530ad3e3ad2fc578b5f593741f
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_0h7mo"]
 load_path = "res://.godot/imported/health_full.png-44624cc602b0f2332817c2f352a54eea.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_d88dk"]
+atlas = ExtResource("9_1fr6y")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_122lf"]
+atlas = ExtResource("9_1fr6y")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_r3ryn"]
+atlas = ExtResource("9_1fr6y")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7ct8v"]
+atlas = ExtResource("9_1fr6y")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sg3tl"]
+atlas = ExtResource("9_1fr6y")
+region = Rect2(128, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0fsb4"]
+atlas = ExtResource("9_1fr6y")
+region = Rect2(160, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_vl5tj"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_d88dk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_122lf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_r3ryn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7ct8v")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sg3tl")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0fsb4")
+}],
+"loop": false,
+"name": &"default",
+"speed": 9.0
+}]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_fkgk1"]
 atlas = ExtResource("24_2nhjh")
@@ -681,6 +733,80 @@ offset_top = -49.0
 offset_right = 146.0
 offset_bottom = -9.0
 columns = 3
+
+[node name="ResultPanel" type="Node2D" parent="UI" unique_id=1238975715]
+position = Vector2(314, -361)
+
+[node name="Background" type="Sprite2D" parent="UI/ResultPanel" unique_id=1463357076]
+scale = Vector2(11, 11)
+texture = ExtResource("8_k73cj")
+
+[node name="Stars" type="Node2D" parent="UI/ResultPanel" unique_id=1489470154]
+position = Vector2(-144, -169)
+
+[node name="Star1" type="Node2D" parent="UI/ResultPanel/Stars" unique_id=841570551]
+scale = Vector2(3, 3)
+
+[node name="Empty" type="Sprite2D" parent="UI/ResultPanel/Stars/Star1" unique_id=1038784089]
+texture = ExtResource("8_gt76g")
+
+[node name="Full" type="AnimatedSprite2D" parent="UI/ResultPanel/Stars/Star1" unique_id=605974718]
+visible = false
+sprite_frames = SubResource("SpriteFrames_vl5tj")
+frame = 5
+frame_progress = 1.0
+
+[node name="Star2" type="Node2D" parent="UI/ResultPanel/Stars" unique_id=154103560]
+position = Vector2(72, 0)
+scale = Vector2(3, 3)
+
+[node name="Empty" type="Sprite2D" parent="UI/ResultPanel/Stars/Star2" unique_id=1894162733]
+texture = ExtResource("8_gt76g")
+
+[node name="Full" type="AnimatedSprite2D" parent="UI/ResultPanel/Stars/Star2" unique_id=1610237587]
+visible = false
+sprite_frames = SubResource("SpriteFrames_vl5tj")
+frame = 5
+frame_progress = 1.0
+
+[node name="Star3" type="Node2D" parent="UI/ResultPanel/Stars" unique_id=812507733]
+position = Vector2(144, 0)
+scale = Vector2(3, 3)
+
+[node name="Empty" type="Sprite2D" parent="UI/ResultPanel/Stars/Star3" unique_id=1065980025]
+texture = ExtResource("8_gt76g")
+
+[node name="Full" type="AnimatedSprite2D" parent="UI/ResultPanel/Stars/Star3" unique_id=225529653]
+visible = false
+sprite_frames = SubResource("SpriteFrames_vl5tj")
+frame = 5
+frame_progress = 1.0
+
+[node name="Star4" type="Node2D" parent="UI/ResultPanel/Stars" unique_id=1703726461]
+position = Vector2(216, 0)
+scale = Vector2(3, 3)
+
+[node name="Empty" type="Sprite2D" parent="UI/ResultPanel/Stars/Star4" unique_id=750260215]
+texture = ExtResource("8_gt76g")
+
+[node name="Full" type="AnimatedSprite2D" parent="UI/ResultPanel/Stars/Star4" unique_id=1958670711]
+visible = false
+sprite_frames = SubResource("SpriteFrames_vl5tj")
+frame = 5
+frame_progress = 1.0
+
+[node name="Star5" type="Node2D" parent="UI/ResultPanel/Stars" unique_id=1370330088]
+position = Vector2(288, 0)
+scale = Vector2(3, 3)
+
+[node name="Empty" type="Sprite2D" parent="UI/ResultPanel/Stars/Star5" unique_id=2098613624]
+texture = ExtResource("8_gt76g")
+
+[node name="Full" type="AnimatedSprite2D" parent="UI/ResultPanel/Stars/Star5" unique_id=1118147500]
+visible = false
+sprite_frames = SubResource("SpriteFrames_vl5tj")
+frame = 5
+frame_progress = 1.0
 
 [node name="CauldronWrapper" type="Node2D" parent="." unique_id=235885093]
 position = Vector2(-118, 506)
