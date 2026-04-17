@@ -45,6 +45,8 @@ var rep_textures = [
 @onready var score_label = get_node("/root/Node2D/UI/ScoreLabel")
 @onready var reputation_bar = get_node("/root/Node2D/UI/ReputationBar")
 @onready var reputation_sprite = get_node("/root/Node2D/UI/ReputationSprite")
+@onready var cauldron = get_node("/root/Node2D/UI/CauldronWrapper")
+@onready var glass = get_node("/root/Node2D/BeerWrapper")
 
 var slot_scene = preload("res://ingredient_slot.tscn")
 
@@ -267,6 +269,8 @@ func start_mixing():
 	)
 
 	ingredients_panel.visible = true
+	show_cauldron()
+	show_glass()
 	player_input.clear()
 	current_step = 0
 	selecting = true
@@ -350,19 +354,25 @@ func show_next_choices():
 
 	var pool = possible_ingredients.duplicate()
 	pool.erase(correct)
-
 	pool.shuffle()
 
 	var wrong_choices = pool.slice(0, 3)
 
 	current_choices = wrong_choices
 	current_choices.append(correct)
-
 	current_choices.shuffle()
 
 	print("Choices:", current_choices)
 
 	var slots = [slot_w, slot_a, slot_s, slot_d]
+
+	var scale_factor = 2
+
+	var base_paper_half = 32
+	var base_icon_half = 16
+
+	var paper_half = int(base_paper_half * scale_factor)
+	var icon_half = int(base_icon_half * scale_factor)
 
 	for i in range(4):
 		var slot = slots[i]
@@ -377,19 +387,32 @@ func show_next_choices():
 			paper.anchor_right = 0.5
 			paper.anchor_bottom = 0.5
 
-			paper.offset_left = -110
-			paper.offset_top = -108
-			paper.offset_right = 82
-			paper.offset_bottom = 84
-
 			paper.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 
 			slot.add_child(paper)
 			slot.move_child(paper, 0)
 
+		var paper = slot.get_node("Paper")
+
+		paper.offset_left = -paper_half
+		paper.offset_top = -paper_half
+		paper.offset_right = paper_half
+		paper.offset_bottom = paper_half
+
 		var texture_rect = slot.get_node("TextureRect")
 		texture_rect.texture = ingredient_textures[current_choices[i]]
 
+		texture_rect.anchor_left = 0.5
+		texture_rect.anchor_top = 0.5
+		texture_rect.anchor_right = 0.5
+		texture_rect.anchor_bottom = 0.5
+
+		texture_rect.offset_left = -icon_half
+		texture_rect.offset_top = -icon_half
+		texture_rect.offset_right = icon_half
+		texture_rect.offset_bottom = icon_half
+
+		texture_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 
 func handle_selection(event):
 	if input_locked:
@@ -602,3 +625,30 @@ func play_rep_transition(new_state):
 	)
 
 	tween.tween_property(reputation_sprite, "scale", Vector2(1, 1), 0.4)
+
+
+func show_cauldron():
+	var target_x = 116
+	var start_x = 0
+
+	cauldron.position.x = start_x
+	cauldron.visible = true
+
+	var tween = create_tween()
+	tween.set_trans(Tween.TRANS_SINE)
+	tween.set_ease(Tween.EASE_OUT)
+
+	tween.tween_property(cauldron, "position:x", target_x, 0.6)
+
+func show_glass():
+	var target_x = 220  
+	var start_x = 700   
+
+	glass.position.x = start_x
+	glass.visible = true
+
+	var tween = create_tween()
+	tween.set_trans(Tween.TRANS_SINE)
+	tween.set_ease(Tween.EASE_OUT)
+
+	tween.tween_property(glass, "position:x", target_x, 0.6)

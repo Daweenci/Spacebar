@@ -11,62 +11,17 @@
 [ext_resource type="Texture2D" uid="uid://b66hsru24ggcs" path="res://Sprites/Schriftrolle.png" id="8_k73cj"]
 [ext_resource type="PackedScene" uid="uid://c0tsfytwx154q" path="res://ingredient_slot.tscn" id="9_ir8iy"]
 [ext_resource type="Texture2D" uid="uid://b06q4ebqsl14s" path="res://Sprites/health_empty.png" id="10_x0ka3"]
+[ext_resource type="Texture2D" uid="uid://brbmpisl1qa2a" path="res://Sprites/Brew_back.png" id="11_fs4d3"]
 [ext_resource type="Texture2D" uid="uid://crxbl5xtodxy" path="res://Sprites/SpaceShip.png" id="12_0h7mo"]
+[ext_resource type="Texture2D" uid="uid://df4lwx36brh6i" path="res://Sprites/Brew_front.png" id="12_7vxoj"]
 [ext_resource type="Texture2D" uid="uid://pmfq40bou88s" path="res://Sprites/SpaceShip4.png" id="12_d2bti"]
 [ext_resource type="Texture2D" uid="uid://cbha7ubnygnjb" path="res://Sprites/SpaceShip5.png" id="12_ta5nu"]
 [ext_resource type="AudioStream" uid="uid://dhqc5w7ahse0w" path="res://Sprites/cool-cat-blues-albert-behar-main-version-15574-01-44.wav" id="13_0h7mo"]
+[ext_resource type="Texture2D" uid="uid://c163rgfcofy8g" path="res://Sprites/glas_empty.png" id="13_ei405"]
 [ext_resource type="Texture2D" uid="uid://c8y7fo3rpl8ot" path="res://Sprites/SpaceShip2.png" id="13_nr8wp"]
+[ext_resource type="Texture2D" uid="uid://cojufvihpwnsr" path="res://Sprites/glas_full.png" id="14_e8dv2"]
 [ext_resource type="Texture2D" uid="uid://xua2dqw2ywi8" path="res://Sprites/SpaceShip3.png" id="15_ta5nu"]
 [ext_resource type="Texture2D" uid="uid://dwf4o0om8s2ad" path="res://Sprites/background_bar.png" id="17_flf07"]
-
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_kdubu"]
-radius = 35.0
-height = 128.0
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_nr8wp"]
-atlas = ExtResource("4_0h7mo")
-region = Rect2(0, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_d2bti"]
-atlas = ExtResource("4_0h7mo")
-region = Rect2(64, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ta5nu"]
-atlas = ExtResource("4_0h7mo")
-region = Rect2(128, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_flf07"]
-atlas = ExtResource("4_0h7mo")
-region = Rect2(192, 0, 64, 64)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_k73cj"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_nr8wp")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_d2bti")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_ta5nu")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_flf07")
-}],
-"loop": true,
-"name": &"default",
-"speed": 5.0
-}]
-
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_hqns4"]
-load_path = "res://.godot/imported/Clock_background.png-dfd9d62f51be6fc16074d5a2812c9fb9.ctex"
-
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_x0ka3"]
-load_path = "res://.godot/imported/Clock_fill.png-3428530ad3e3ad2fc578b5f593741f66.ctex"
-
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_0h7mo"]
-load_path = "res://.godot/imported/health_full.png-44624cc602b0f2332817c2f352a54eea.ctex"
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_4qosj"]
 atlas = ExtResource("12_ta5nu")
@@ -362,7 +317,85 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_kdubu"]
+radius = 35.0
+height = 128.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nr8wp"]
+atlas = ExtResource("4_0h7mo")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_d2bti"]
+atlas = ExtResource("4_0h7mo")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ta5nu"]
+atlas = ExtResource("4_0h7mo")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_flf07"]
+atlas = ExtResource("4_0h7mo")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_k73cj"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nr8wp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_d2bti")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ta5nu")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_flf07")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_hqns4"]
+load_path = "res://.godot/imported/Clock_background.png-dfd9d62f51be6fc16074d5a2812c9fb9.ctex"
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_x0ka3"]
+load_path = "res://.godot/imported/Clock_fill.png-3428530ad3e3ad2fc578b5f593741f66.ctex"
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_0h7mo"]
+load_path = "res://.godot/imported/health_full.png-44624cc602b0f2332817c2f352a54eea.ctex"
+
 [node name="Node2D" type="Node2D" unique_id=659122761]
+
+[node name="MeteorTimer" type="Timer" parent="." unique_id=1006086067]
+autostart = true
+
+[node name="GameManager" type="Node" parent="." unique_id=126490208]
+script = ExtResource("7_d21ai")
+
+[node name="MainTheme" type="AudioStreamPlayer" parent="." unique_id=1196903775]
+stream = ExtResource("13_0h7mo")
+volume_db = -10.0
+autoplay = true
+
+[node name="BarBackground" type="Node2D" parent="." unique_id=714968556]
+
+[node name="TextureRect" type="TextureRect" parent="BarBackground" unique_id=1687521754]
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("17_flf07")
+
+[node name="BeerWrapper" type="Node2D" parent="." unique_id=1202508547]
+position = Vector2(687, 552)
+scale = Vector2(3, 3)
+
+[node name="Empty" type="Sprite2D" parent="BeerWrapper" unique_id=30574279]
+texture = ExtResource("13_ei405")
+
+[node name="Full" type="Sprite2D" parent="BeerWrapper" unique_id=639614589]
+visible = false
+texture = ExtResource("14_e8dv2")
 
 [node name="StarBackground" type="Node2D" parent="." unique_id=2095127330]
 position = Vector2(640, 359)
@@ -374,6 +407,11 @@ offset_right = 640.0
 offset_bottom = 361.0
 texture = ExtResource("2_x0ka3")
 stretch_mode = 1
+
+[node name="Customer" type="AnimatedSprite2D" parent="." unique_id=1472832479]
+position = Vector2(946, 867)
+sprite_frames = SubResource("SpriteFrames_24dk6")
+animation = &"customer1"
 
 [node name="Player" type="CharacterBody2D" parent="." unique_id=976441725]
 position = Vector2(972, 619)
@@ -396,9 +434,6 @@ sprite_frames = SubResource("SpriteFrames_k73cj")
 [node name="MeteorSpawner" type="Node2D" parent="." unique_id=2146611452]
 script = ExtResource("5_kdubu")
 meteor_scene = ExtResource("6_d21ai")
-
-[node name="MeteorTimer" type="Timer" parent="." unique_id=1006086067]
-autostart = true
 
 [node name="UI" type="CanvasLayer" parent="." unique_id=544085863]
 
@@ -517,25 +552,17 @@ offset_right = 146.0
 offset_bottom = -9.0
 columns = 3
 
-[node name="GameManager" type="Node" parent="." unique_id=126490208]
-script = ExtResource("7_d21ai")
+[node name="CauldronWrapper" type="Node2D" parent="UI" unique_id=235885093]
+position = Vector2(-118, 506)
+scale = Vector2(6, 6)
 
-[node name="MainTheme" type="AudioStreamPlayer" parent="." unique_id=1196903775]
-stream = ExtResource("13_0h7mo")
-volume_db = -10.0
-autoplay = true
+[node name="CauldronBack" type="Sprite2D" parent="UI/CauldronWrapper" unique_id=386118632]
+texture = ExtResource("11_fs4d3")
 
-[node name="Customer" type="AnimatedSprite2D" parent="." unique_id=1472832479]
-position = Vector2(946, 867)
-sprite_frames = SubResource("SpriteFrames_24dk6")
-animation = &"customer1"
+[node name="IngredientDropPoint" type="Node2D" parent="UI/CauldronWrapper" unique_id=684070396]
 
-[node name="BarBackground" type="Node2D" parent="." unique_id=714968556]
+[node name="CauldronFront" type="Sprite2D" parent="UI/CauldronWrapper" unique_id=444812376]
+texture = ExtResource("12_7vxoj")
 
-[node name="TextureRect" type="TextureRect" parent="BarBackground" unique_id=1687521754]
-offset_right = 40.0
-offset_bottom = 40.0
-texture = ExtResource("17_flf07")
-
-[connection signal="area_entered" from="Player/Hurtbox" to="Player" method="_on_hurtbox_area_entered"]
 [connection signal="timeout" from="MeteorTimer" to="MeteorSpawner" method="_on_meteor_timer_timeout"]
+[connection signal="area_entered" from="Player/Hurtbox" to="Player" method="_on_hurtbox_area_entered"]

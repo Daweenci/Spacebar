@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://df4lwx36brh6i"
-path="res://.godot/imported/Brew_front.png-97d381b15a50689a3fc05c14ea86833d.ctex"
+uid="uid://cojufvihpwnsr"
+path="res://.godot/imported/glas_full.png-efcd7b50f2ea768428adda35fb14bb9f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Sprites/Brew_front.png"
-dest_files=["res://.godot/imported/Brew_front.png-97d381b15a50689a3fc05c14ea86833d.ctex"]
+source_file="res://Sprites/glas_full.png"
+dest_files=["res://.godot/imported/glas_full.png-efcd7b50f2ea768428adda35fb14bb9f.ctex"]
 
 [params]
 
