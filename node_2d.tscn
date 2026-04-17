@@ -8,7 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://cru8gqkg8vfyn" path="res://meteor.tscn" id="6_d21ai"]
 [ext_resource type="Script" uid="uid://110t8slt34hp" path="res://game_manager.gd" id="7_d21ai"]
 [ext_resource type="FontFile" uid="uid://bbmsrnr7nnbe7" path="res://Sprites/PixeloidMono-nAOpP.ttf" id="7_x0ka3"]
-[ext_resource type="Texture2D" uid="uid://b66hsru24ggcs" path="res://Sprites/Schriftrolle (1).png" id="8_k73cj"]
+[ext_resource type="Texture2D" uid="uid://b66hsru24ggcs" path="res://Sprites/Schriftrolle.png" id="8_k73cj"]
 [ext_resource type="PackedScene" uid="uid://c0tsfytwx154q" path="res://ingredient_slot.tscn" id="9_ir8iy"]
 [ext_resource type="Texture2D" uid="uid://b06q4ebqsl14s" path="res://Sprites/health_empty.png" id="10_x0ka3"]
 [ext_resource type="Texture2D" uid="uid://crxbl5xtodxy" path="res://Sprites/SpaceShip.png" id="12_0h7mo"]
@@ -428,9 +428,9 @@ anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 123.0
-offset_top = 100.0
+offset_top = 41.0
 offset_right = -762.0
-offset_bottom = -157.0
+offset_bottom = -216.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -494,6 +494,7 @@ offset_bottom = 658.0
 
 [node name="RecipePanel" type="Control" parent="UI/RecipePanelWrapper" unique_id=1783354432]
 layout_mode = 3
+anchors_preset = 0
 offset_left = 30.0
 offset_top = -534.0
 offset_right = 620.0

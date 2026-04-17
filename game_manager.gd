@@ -112,6 +112,8 @@ var recipe_start_offset = -720
 var recipe_base_y
 var recipe_visible_y = 720
 
+var paper_texture = preload("res://Sprites/Schriftrolle.png")
+
 
 func _ready():
 	await get_tree().process_frame
@@ -363,7 +365,29 @@ func show_next_choices():
 	var slots = [slot_w, slot_a, slot_s, slot_d]
 
 	for i in range(4):
-		var texture_rect = slots[i].get_node("TextureRect")
+		var slot = slots[i]
+
+		if not slot.has_node("Paper"):
+			var paper = TextureRect.new()
+			paper.name = "Paper"
+			paper.texture = paper_texture
+
+			paper.anchor_left = 0.5
+			paper.anchor_top = 0.5
+			paper.anchor_right = 0.5
+			paper.anchor_bottom = 0.5
+
+			paper.offset_left = -110
+			paper.offset_top = -108
+			paper.offset_right = 82
+			paper.offset_bottom = 84
+
+			paper.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+
+			slot.add_child(paper)
+			slot.move_child(paper, 0)
+
+		var texture_rect = slot.get_node("TextureRect")
 		texture_rect.texture = ingredient_textures[current_choices[i]]
 
 

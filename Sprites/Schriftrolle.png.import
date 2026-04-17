@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b66hsru24ggcs"
-path="res://.godot/imported/Schriftrolle (1).png-c6d21c7ea0d44fc03db594de8b39ce37.ctex"
+path="res://.godot/imported/Schriftrolle.png-e2e0c483c049014ba3980f00545060be.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Sprites/Schriftrolle (1).png"
-dest_files=["res://.godot/imported/Schriftrolle (1).png-c6d21c7ea0d44fc03db594de8b39ce37.ctex"]
+source_file="res://Sprites/Schriftrolle.png"
+dest_files=["res://.godot/imported/Schriftrolle.png-e2e0c483c049014ba3980f00545060be.ctex"]
 
 [params]
 
