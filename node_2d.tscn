@@ -728,10 +728,12 @@ texture = ExtResource("8_k73cj")
 
 [node name="GridContainer" type="GridContainer" parent="UI/RecipePanelWrapper/RecipePanel" unique_id=1967159559]
 layout_mode = 0
-offset_left = 106.0
-offset_top = -49.0
-offset_right = 146.0
-offset_bottom = -9.0
+offset_left = 129.0
+offset_top = -30.0
+offset_right = 169.0
+offset_bottom = 10.0
+theme_override_constants/h_separation = 0
+theme_override_constants/v_separation = 0
 columns = 3
 
 [node name="ResultPanel" type="Node2D" parent="UI" unique_id=1238975715]
@@ -809,10 +811,11 @@ frame = 5
 frame_progress = 1.0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="UI/ResultPanel" unique_id=1620025842]
-offset_left = -184.0
+offset_left = -157.0
 offset_top = -109.0
-offset_right = 44.0
+offset_right = 71.0
 offset_bottom = 7.0
+theme_override_constants/separation = 4
 
 [node name="RecipeHeader" type="HBoxContainer" parent="UI/ResultPanel/VBoxContainer" unique_id=664209036]
 layout_mode = 2
@@ -827,8 +830,9 @@ theme_override_fonts/font = ExtResource("7_x0ka3")
 theme_override_font_sizes/font_size = 32
 text = "Recipe"
 
-[node name="CorrectRecipe" type="HBoxContainer" parent="UI/ResultPanel/VBoxContainer" unique_id=1532152142]
+[node name="CorrectRecipe" type="GridContainer" parent="UI/ResultPanel/VBoxContainer" unique_id=868415499]
 layout_mode = 2
+columns = 6
 
 [node name="PlayerHeader" type="HBoxContainer" parent="UI/ResultPanel/VBoxContainer" unique_id=527894045]
 layout_mode = 2
@@ -843,8 +847,9 @@ theme_override_fonts/font = ExtResource("7_x0ka3")
 theme_override_font_sizes/font_size = 32
 text = "Your Brew"
 
-[node name="PlayerRecipe" type="HBoxContainer" parent="UI/ResultPanel/VBoxContainer" unique_id=1475534155]
+[node name="PlayerRecipe" type="GridContainer" parent="UI/ResultPanel/VBoxContainer" unique_id=1416152521]
 layout_mode = 2
+columns = 6
 
 [node name="CauldronWrapper" type="Node2D" parent="." unique_id=235885093]
 position = Vector2(-118, 506)

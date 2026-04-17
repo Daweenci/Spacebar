@@ -516,8 +516,22 @@ func show_recipe_ui():
 
 	for ingredient in current_recipe:
 		var slot = slot_scene.instantiate()
+
+		slot.custom_minimum_size = Vector2(104, 104)
+
 		var texture_rect = slot.get_node("TextureRect")
 		texture_rect.texture = ingredient_textures[ingredient]
+
+		texture_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		texture_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		texture_rect.anchor_left = 0
+		texture_rect.anchor_top = 0
+		texture_rect.anchor_right = 1
+		texture_rect.anchor_bottom = 1
+		texture_rect.offset_left = 0
+		texture_rect.offset_top = 0
+		texture_rect.offset_right = 0
+		texture_rect.offset_bottom = 0
 
 		recipe_container.add_child(slot)
 
@@ -858,7 +872,7 @@ func animate_stars(amount):
 		tween.set_trans(Tween.TRANS_BACK)
 		tween.set_ease(Tween.EASE_OUT)
 
-		tween.tween_property(full, "scale", Vector2(1.2, 1.2), 0.4)
+		tween.tween_property(full, "scale", Vector2(1.2, 1.2), 0.2)
 		tween.tween_property(full, "scale", Vector2(1, 1), 0.2)
 
 		await tween.finished
@@ -884,7 +898,6 @@ func show_recipe_comparison():
 		var correct = current_recipe[i]
 		var player = player_input[i]
 
-		# --- CORRECT SLOT ---
 		var correct_slot = slot_scene.instantiate()
 		correct_slot.custom_minimum_size = Vector2(48, 48)
 		correct_slot.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
@@ -892,7 +905,6 @@ func show_recipe_comparison():
 		var tex2 = correct_slot.get_node("TextureRect")
 		tex2.texture = ingredient_textures[correct]
 
-		# 🔑 FORCE TEXTURE TO FIT SLOT
 		tex2.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		tex2.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		tex2.anchor_left = 0
@@ -906,7 +918,6 @@ func show_recipe_comparison():
 
 		correct_container.add_child(correct_slot)
 
-		# --- PLAYER SLOT ---
 		var player_slot = slot_scene.instantiate()
 		player_slot.custom_minimum_size = Vector2(48, 48)
 		player_slot.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
@@ -914,7 +925,6 @@ func show_recipe_comparison():
 		var tex = player_slot.get_node("TextureRect")
 		tex.texture = ingredient_textures[player]
 
-		# 🔑 SAME FIX HERE
 		tex.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		tex.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		tex.anchor_left = 0
@@ -926,7 +936,6 @@ func show_recipe_comparison():
 		tex.offset_right = 0
 		tex.offset_bottom = 0
 
-		# --- CROSS FOR WRONG ---
 		if player != correct:
 			var cross = Label.new()
 			cross.text = "✖"
