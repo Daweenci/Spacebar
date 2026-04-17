@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://cru8gqkg8vfyn" path="res://meteor.tscn" id="6_d21ai"]
 [ext_resource type="Script" uid="uid://110t8slt34hp" path="res://game_manager.gd" id="7_d21ai"]
 [ext_resource type="FontFile" uid="uid://bbmsrnr7nnbe7" path="res://Sprites/PixeloidMono-nAOpP.ttf" id="7_x0ka3"]
+[ext_resource type="Texture2D" uid="uid://b66hsru24ggcs" path="res://Sprites/Schriftrolle (1).png" id="8_k73cj"]
 [ext_resource type="PackedScene" uid="uid://c0tsfytwx154q" path="res://ingredient_slot.tscn" id="9_ir8iy"]
 [ext_resource type="Texture2D" uid="uid://b06q4ebqsl14s" path="res://Sprites/health_empty.png" id="10_x0ka3"]
 [ext_resource type="Texture2D" uid="uid://crxbl5xtodxy" path="res://Sprites/SpaceShip.png" id="12_0h7mo"]
@@ -16,6 +17,7 @@
 [ext_resource type="AudioStream" uid="uid://dhqc5w7ahse0w" path="res://Sprites/cool-cat-blues-albert-behar-main-version-15574-01-44.wav" id="13_0h7mo"]
 [ext_resource type="Texture2D" uid="uid://c8y7fo3rpl8ot" path="res://Sprites/SpaceShip2.png" id="13_nr8wp"]
 [ext_resource type="Texture2D" uid="uid://xua2dqw2ywi8" path="res://Sprites/SpaceShip3.png" id="15_ta5nu"]
+[ext_resource type="Texture2D" uid="uid://dwf4o0om8s2ad" path="res://Sprites/background_bar.png" id="17_flf07"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_kdubu"]
 radius = 35.0
@@ -420,19 +422,6 @@ nine_patch_stretch = true
 texture_under = SubResource("CompressedTexture2D_hqns4")
 texture_progress = SubResource("CompressedTexture2D_x0ka3")
 
-[node name="RecipePanel" type="Control" parent="UI" unique_id=1783354432]
-layout_mode = 3
-anchors_preset = 0
-offset_left = 30.0
-offset_top = 186.0
-offset_right = 620.0
-offset_bottom = 519.0
-
-[node name="HFlowContainer" type="HFlowContainer" parent="UI/RecipePanel" unique_id=348989132]
-layout_mode = 0
-offset_right = 586.0
-offset_bottom = 328.0
-
 [node name="IngredientsContainer" type="Control" parent="UI" unique_id=511063971]
 layout_mode = 3
 anchors_preset = 15
@@ -457,7 +446,6 @@ layout_mode = 2
 
 [node name="IngredientSlotW" parent="UI/IngredientsContainer/CenterContainer/VBoxContainer" unique_id=1871032231 instance=ExtResource("9_ir8iy")]
 layout_mode = 2
-size_flags_horizontal = 4
 
 [node name="HBoxContainer" type="HBoxContainer" parent="UI/IngredientsContainer/CenterContainer/VBoxContainer" unique_id=122594154]
 layout_mode = 2
@@ -474,7 +462,6 @@ layout_mode = 2
 
 [node name="IngredientSlotS" parent="UI/IngredientsContainer/CenterContainer/VBoxContainer" unique_id=2076734103 instance=ExtResource("9_ir8iy")]
 layout_mode = 2
-size_flags_horizontal = 4
 
 [node name="ScoreLabel" type="Label" parent="UI" unique_id=1858744426]
 offset_left = 1078.0
@@ -503,6 +490,32 @@ offset_top = 629.0
 offset_right = 786.0
 offset_bottom = 658.0
 
+[node name="RecipePanelWrapper" type="Node2D" parent="UI" unique_id=721976349]
+
+[node name="RecipePanel" type="Control" parent="UI/RecipePanelWrapper" unique_id=1783354432]
+layout_mode = 3
+offset_left = 30.0
+offset_top = -534.0
+offset_right = 620.0
+offset_bottom = -201.0
+
+[node name="TextureRect" type="TextureRect" parent="UI/RecipePanelWrapper/RecipePanel" unique_id=1374352900]
+layout_mode = 0
+offset_left = 20.0
+offset_top = -179.0
+offset_right = 68.0
+offset_bottom = -115.0
+scale = Vector2(11, 11)
+texture = ExtResource("8_k73cj")
+
+[node name="GridContainer" type="GridContainer" parent="UI/RecipePanelWrapper/RecipePanel" unique_id=1967159559]
+layout_mode = 0
+offset_left = 106.0
+offset_top = -49.0
+offset_right = 146.0
+offset_bottom = -9.0
+columns = 3
+
 [node name="GameManager" type="Node" parent="." unique_id=126490208]
 script = ExtResource("7_d21ai")
 
@@ -517,6 +530,11 @@ sprite_frames = SubResource("SpriteFrames_24dk6")
 animation = &"customer1"
 
 [node name="BarBackground" type="Node2D" parent="." unique_id=714968556]
+
+[node name="TextureRect" type="TextureRect" parent="BarBackground" unique_id=1687521754]
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("17_flf07")
 
 [connection signal="area_entered" from="Player/Hurtbox" to="Player" method="_on_hurtbox_area_entered"]
 [connection signal="timeout" from="MeteorTimer" to="MeteorSpawner" method="_on_meteor_timer_timeout"]

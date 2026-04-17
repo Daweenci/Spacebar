@@ -34,8 +34,8 @@ var rep_textures = [
 
 @onready var customer = get_node("/root/Node2D/Customer")
 @onready var clock = get_node("/root/Node2D/UI/Clock")
-@onready var recipe_container = get_node("/root/Node2D/UI/RecipePanel/HFlowContainer")
-@onready var recipe_panel = get_node("/root/Node2D/UI/RecipePanel")
+@onready var recipe_container = get_node("/root/Node2D/UI/RecipePanelWrapper/RecipePanel/GridContainer")
+@onready var recipe_panel = get_node("/root/Node2D/UI/RecipePanelWrapper")
 @onready var ingredients_panel = get_node("/root/Node2D/UI/IngredientsContainer")
 
 @onready var slot_w = get_node("/root/Node2D/UI/IngredientsContainer/CenterContainer/VBoxContainer/IngredientSlotW")
@@ -98,7 +98,7 @@ var mixing_timer_running = false
 var pending_stars = 0
 var score = 0
 var reputation = 5
-var max_recipe_length = 10
+var max_recipe_length = 12
 
 var input_locked = false
 var reputation_tween
@@ -107,8 +107,15 @@ var current_rep_state = 2
 var customer_animations = ["customer1", "customer2", "customer3", "customer4", "customer5"]
 var current_customer_index = 0
 
+var recipe_target_pos
+var recipe_start_offset = -720
+var recipe_base_y
+var recipe_visible_y = 720
+
 
 func _ready():
+	await get_tree().process_frame
+	recipe_base_y = recipe_panel.position.y
 	customer.scale = Vector2(2, 2)
 	reputation_sprite.texture = rep_textures[current_rep_state]
 	await get_tree().process_frame
@@ -230,17 +237,33 @@ func accept_order():
 
 	generate_recipe()
 	show_recipe_ui()
-	
+
+	recipe_panel.position.y = recipe_base_y
 	recipe_panel.visible = true
-	
+
+	var tween = create_tween()
+	tween.set_trans(Tween.TRANS_CUBIC)
+	tween.set_ease(Tween.EASE_OUT)
+
+	tween.tween_property(recipe_panel, "position:y", recipe_visible_y, 0.5)
+
 	state = GameState.SHOW_RECIPE
 
 
 func start_mixing():
 	if state != GameState.SHOW_RECIPE:
 		return
-		
-	recipe_panel.visible = false
+
+	var tween = create_tween()
+	tween.set_trans(Tween.TRANS_CUBIC)
+	tween.set_ease(Tween.EASE_IN)
+
+	tween.tween_property(recipe_panel, "position:y", recipe_base_y, 0.4)
+
+	tween.finished.connect(func():
+		recipe_panel.visible = false
+	)
+
 	ingredients_panel.visible = true
 	player_input.clear()
 	current_step = 0
