@@ -52,6 +52,7 @@ var rep_textures = [
 @onready var glass_anim = get_node("/root/Node2D/BeerWrapper/Animation")
 @onready var cauldron_anim = get_node("/root/Node2D/CauldronWrapper/BrewAnim")
 @onready var cauldron_front = get_node("/root/Node2D/CauldronWrapper/CauldronFront")
+@onready var drop_point = get_node("/root/Node2D/CauldronWrapper/IngredientDropPoint")
 
 var brew_animating = false
 
@@ -472,6 +473,9 @@ func select_ingredient(index):
 	player_input.append(chosen)
 
 	print("Selected:", chosen)
+	var slot = [slot_w, slot_a, slot_s, slot_d][index]
+	var texture = ingredient_textures[chosen]
+	drop_ingredient(texture)
 
 	current_step += 1
 
@@ -751,3 +755,28 @@ func stop_brew_animation():
 func _on_brew_finished():
 	if brew_animating:
 		stop_brew_animation()
+
+func drop_ingredient(texture):
+	var sprite = Sprite2D.new()
+	sprite.texture = texture
+	
+	sprite.scale = Vector2(0.5, 0.5)
+	
+	var front_index = cauldron.get_node("CauldronFront").get_index()
+
+	cauldron.add_child(sprite)
+	cauldron.move_child(sprite, front_index)
+	sprite.global_position = Vector2(100,380)
+
+	var tween = create_tween()
+	tween.set_trans(Tween.TRANS_SINE)
+	tween.set_ease(Tween.EASE_IN)
+
+	tween.tween_property(sprite, "global_position", drop_point.global_position, 0.6)
+
+	tween.parallel().tween_property(sprite, "rotation", randf_range(-2, 2), 0.6)
+	tween.parallel().tween_property(sprite, "scale", Vector2(0.5, 0.5), 0.6)
+
+	tween.finished.connect(func():
+		sprite.queue_free()
+	)
