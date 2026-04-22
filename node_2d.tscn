@@ -1012,22 +1012,22 @@ meteor_scene = ExtResource("6_d21ai")
 visible = false
 
 [node name="Arrow1" type="AnimatedSprite2D" parent="Arrows" unique_id=865219994]
-position = Vector2(819, 609)
+position = Vector2(819, 604)
 sprite_frames = SubResource("SpriteFrames_2wyoe")
 autoplay = "default"
 
 [node name="Arrow2" type="AnimatedSprite2D" parent="Arrows" unique_id=1972682489]
-position = Vector2(913, 609)
+position = Vector2(913, 604)
 sprite_frames = SubResource("SpriteFrames_2wyoe")
 autoplay = "default"
 
 [node name="Arrow3" type="AnimatedSprite2D" parent="Arrows" unique_id=504284510]
-position = Vector2(1010, 609)
+position = Vector2(1010, 604)
 sprite_frames = SubResource("SpriteFrames_2wyoe")
 autoplay = "default"
 
 [node name="Arrow4" type="AnimatedSprite2D" parent="Arrows" unique_id=1944932364]
-position = Vector2(1105, 609)
+position = Vector2(1105, 604)
 sprite_frames = SubResource("SpriteFrames_2wyoe")
 autoplay = "default"
 
@@ -1123,8 +1123,13 @@ text = "Exit"
 
 [node name="Credits" type="Button" parent="GameOver/GameOverPanel" unique_id=547380169]
 layout_mode = 0
-offset_right = 8.0
-offset_bottom = 8.0
+offset_left = 1191.6667
+offset_top = 739.2849
+offset_right = 1498.6667
+offset_bottom = 826.2849
+theme_override_fonts/font = ExtResource("7_x0ka3")
+theme_override_font_sizes/font_size = 64
+text = "Credits"
 
 [connection signal="timeout" from="MeteorTimer" to="MeteorSpawner" method="_on_meteor_timer_timeout"]
 [connection signal="area_entered" from="Player/Hurtbox" to="Player" method="_on_hurtbox_area_entered"]
