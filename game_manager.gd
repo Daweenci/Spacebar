@@ -59,6 +59,7 @@ var rep_textures = [
 @onready var player_container = result_panel.get_node("VBoxContainer/PlayerRecipe")
 @onready var game_over_panel = get_node("/root/Node2D/GameOver/GameOverPanel")
 @onready var player = get_node("/root/Node2D/Player")
+@onready var arrows = get_node("/root/Node2D/Arrows")
 
 var brew_animating = false
 
@@ -137,6 +138,8 @@ var result_visible_y = 360
 
 var dark_overlay: ColorRect
 
+var approaching_customer_first_time = true
+
 func _ready():
 	dark_overlay = ColorRect.new()
 	dark_overlay.color = Color(0, 0, 0, 0.6)
@@ -203,6 +206,8 @@ func _process(delta):
 
 
 func start_customer():
+	if (approaching_customer_first_time):
+		arrows.visible = true
 	var anim = customer_animations[current_customer_index]
 	customer.play(anim)
 
@@ -269,7 +274,10 @@ func fail_customer():
 func accept_order():
 	if state != GameState.CLIENT_WAITING:
 		return
-
+	
+	if (approaching_customer_first_time):
+		approaching_customer_first_time = false
+		arrows.visible = false
 	warning_player.stop()
 	warning_playing = false
 	approach_timer_running = false

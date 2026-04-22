@@ -26,6 +26,8 @@
 [ext_resource type="Texture2D" uid="uid://xua2dqw2ywi8" path="res://Sprites/SpaceShip3.png" id="15_ta5nu"]
 [ext_resource type="Texture2D" uid="uid://dwf4o0om8s2ad" path="res://Sprites/background_bar.png" id="17_flf07"]
 [ext_resource type="Texture2D" uid="uid://iq15u1yayor8" path="res://Sprites/Brew_animation.png" id="24_2nhjh"]
+[ext_resource type="Texture2D" uid="uid://cu7kptk1bv2tr" path="res://Sprites/arrows.png" id="25_1fr6y"]
+[ext_resource type="Texture2D" uid="uid://ba0iokfutir4g" path="res://Sprites/spot.png" id="26_2hxjc"]
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_hqns4"]
 load_path = "res://.godot/imported/Clock_background.png-dfd9d62f51be6fc16074d5a2812c9fb9.ctex"
@@ -557,6 +559,106 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_vl5tj"]
+atlas = ExtResource("25_1fr6y")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_16pp4"]
+atlas = ExtResource("25_1fr6y")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5od4l"]
+atlas = ExtResource("25_1fr6y")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4himb"]
+atlas = ExtResource("25_1fr6y")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fv7tb"]
+atlas = ExtResource("25_1fr6y")
+region = Rect2(256, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1m5r5"]
+atlas = ExtResource("25_1fr6y")
+region = Rect2(320, 0, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_2wyoe"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vl5tj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_16pp4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5od4l")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4himb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fv7tb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1m5r5")
+}],
+"loop": true,
+"name": &"default",
+"speed": 8.0
+}]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2wyoe"]
+atlas = ExtResource("26_2hxjc")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5cr6e"]
+atlas = ExtResource("26_2hxjc")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fm8k7"]
+atlas = ExtResource("26_2hxjc")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_n63ng"]
+atlas = ExtResource("26_2hxjc")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wnn4a"]
+atlas = ExtResource("26_2hxjc")
+region = Rect2(256, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1aygh"]
+atlas = ExtResource("26_2hxjc")
+region = Rect2(320, 0, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_td2a2"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2wyoe")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5cr6e")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fm8k7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_n63ng")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wnn4a")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1aygh")
+}],
+"loop": true,
+"name": &"default",
+"speed": 8.0
+}]
+
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_kdubu"]
 radius = 35.0
 height = 128.0
@@ -905,6 +1007,35 @@ animation = &"customer1"
 [node name="MeteorSpawner" type="Node2D" parent="." unique_id=2146611452]
 script = ExtResource("5_kdubu")
 meteor_scene = ExtResource("6_d21ai")
+
+[node name="Arrows" type="Node2D" parent="." unique_id=398758715]
+visible = false
+
+[node name="Arrow1" type="AnimatedSprite2D" parent="Arrows" unique_id=865219994]
+position = Vector2(819, 609)
+sprite_frames = SubResource("SpriteFrames_2wyoe")
+autoplay = "default"
+
+[node name="Arrow2" type="AnimatedSprite2D" parent="Arrows" unique_id=1972682489]
+position = Vector2(913, 609)
+sprite_frames = SubResource("SpriteFrames_2wyoe")
+autoplay = "default"
+
+[node name="Arrow3" type="AnimatedSprite2D" parent="Arrows" unique_id=504284510]
+position = Vector2(1010, 609)
+sprite_frames = SubResource("SpriteFrames_2wyoe")
+autoplay = "default"
+
+[node name="Arrow4" type="AnimatedSprite2D" parent="Arrows" unique_id=1944932364]
+position = Vector2(1105, 609)
+sprite_frames = SubResource("SpriteFrames_2wyoe")
+autoplay = "default"
+
+[node name="ReceivingSpot" type="AnimatedSprite2D" parent="Arrows" unique_id=1581723265]
+position = Vector2(1105, 611)
+scale = Vector2(2, 2)
+sprite_frames = SubResource("SpriteFrames_td2a2")
+autoplay = "default"
 
 [node name="Player" type="CharacterBody2D" parent="." unique_id=976441725]
 position = Vector2(972, 619)
