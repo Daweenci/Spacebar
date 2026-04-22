@@ -705,6 +705,7 @@ animations = [{
 autostart = true
 
 [node name="GameManager" type="Node" parent="." unique_id=126490208]
+process_mode = 3
 script = ExtResource("7_d21ai")
 
 [node name="MainTheme" type="AudioStreamPlayer" parent="." unique_id=1196903775]
@@ -1131,7 +1132,128 @@ theme_override_fonts/font = ExtResource("7_x0ka3")
 theme_override_font_sizes/font_size = 64
 text = "Credits"
 
+[node name="Menu" type="CanvasLayer" parent="." unique_id=345347228]
+visible = false
+
+[node name="MenuPanel" type="Control" parent="Menu" unique_id=746840933]
+process_mode = 3
+z_index = 7
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.48, 0.8400009)
+
+[node name="TitleLabel" type="Label" parent="Menu/MenuPanel" unique_id=661662628]
+layout_mode = 0
+offset_left = 1170.8334
+offset_top = 128.57129
+offset_right = 1938.8334
+offset_bottom = 285.5713
+theme_override_fonts/font = ExtResource("7_x0ka3")
+theme_override_font_sizes/font_size = 128
+text = "MENU"
+
+[node name="HighscoreLabel" type="Label" parent="Menu/MenuPanel" unique_id=1046585179]
+layout_mode = 0
+offset_left = 1114.5834
+offset_top = 303.5711
+offset_right = 1626.5834
+offset_bottom = 382.5711
+theme_override_fonts/font = ExtResource("7_x0ka3")
+theme_override_font_sizes/font_size = 64
+text = "Highscore: x"
+
+[node name="Settings" type="Button" parent="Menu/MenuPanel" unique_id=1735825870]
+layout_mode = 0
+offset_left = 1160.4167
+offset_top = 405.95193
+offset_right = 1509.4167
+offset_bottom = 492.95193
+theme_override_fonts/font = ExtResource("7_x0ka3")
+theme_override_font_sizes/font_size = 64
+text = "Settings"
+
+[node name="Retry" type="Button" parent="Menu/MenuPanel" unique_id=929213086]
+layout_mode = 0
+offset_left = 1229.1665
+offset_top = 520.23755
+offset_right = 1450.1665
+offset_bottom = 607.23755
+theme_override_fonts/font = ExtResource("7_x0ka3")
+theme_override_font_sizes/font_size = 64
+text = "Retry"
+
+[node name="Exit" type="Button" parent="Menu/MenuPanel" unique_id=662932072]
+layout_mode = 0
+offset_left = 1254.1665
+offset_top = 629.7612
+offset_right = 1433.1665
+offset_bottom = 716.7612
+theme_override_fonts/font = ExtResource("7_x0ka3")
+theme_override_font_sizes/font_size = 64
+text = "Exit"
+
+[node name="Credits" type="Button" parent="Menu/MenuPanel" unique_id=1952537745]
+layout_mode = 0
+offset_left = 1191.6666
+offset_top = 739.2849
+offset_right = 1498.6666
+offset_bottom = 826.2849
+theme_override_fonts/font = ExtResource("7_x0ka3")
+theme_override_font_sizes/font_size = 64
+text = "Credits"
+
+[node name="Settings" type="CanvasLayer" parent="." unique_id=1865585937]
+visible = false
+
+[node name="SettingsPanel" type="Control" parent="Settings" unique_id=926018456]
+layout_mode = 3
+anchors_preset = 0
+offset_left = -1.0
+offset_top = -4.0
+offset_right = 39.0
+offset_bottom = 36.0
+
+[node name="TitleLabel" type="Label" parent="Settings/SettingsPanel" unique_id=1920550282]
+layout_mode = 0
+offset_left = 432.0
+offset_top = 99.0
+offset_right = 1115.0
+offset_bottom = 256.0
+theme_override_fonts/font = ExtResource("7_x0ka3")
+theme_override_font_sizes/font_size = 80
+text = "Settings"
+
+[node name="Volume" type="Label" parent="Settings/SettingsPanel" unique_id=6277291]
+layout_mode = 0
+offset_left = 395.0
+offset_top = 348.0
+offset_right = 651.0
+offset_bottom = 509.0
+theme_override_fonts/font = ExtResource("7_x0ka3")
+theme_override_font_sizes/font_size = 32
+text = "Volume
+"
+
+[node name="HSlider" type="HSlider" parent="Settings/SettingsPanel" unique_id=588384679]
+layout_mode = 0
+offset_left = 539.0
+offset_top = 363.0
+offset_right = 839.0
+offset_bottom = 379.0
+max_value = 1.0
+step = 0.1
+value = 1.0
+
 [connection signal="timeout" from="MeteorTimer" to="MeteorSpawner" method="_on_meteor_timer_timeout"]
 [connection signal="area_entered" from="Player/Hurtbox" to="Player" method="_on_hurtbox_area_entered"]
 [connection signal="pressed" from="GameOver/GameOverPanel/Retry" to="GameManager" method="_on_retry_button_pressed"]
 [connection signal="pressed" from="GameOver/GameOverPanel/Exit" to="GameManager" method="_on_exit_button_pressed"]
+[connection signal="pressed" from="GameOver/GameOverPanel/Credits" to="GameManager" method="_on_credits_pressed"]
+[connection signal="pressed" from="Menu/MenuPanel/Retry" to="GameManager" method="_on_retry_button_pressed"]
+[connection signal="pressed" from="Menu/MenuPanel/Exit" to="GameManager" method="_on_exit_button_pressed"]
+[connection signal="pressed" from="Menu/MenuPanel/Credits" to="GameManager" method="_on_credits_pressed"]
+[connection signal="value_changed" from="Settings/SettingsPanel/HSlider" to="GameManager" method="_on_h_slider_value_changed"]

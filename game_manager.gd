@@ -140,8 +140,10 @@ var dark_overlay: ColorRect
 
 var approaching_customer_first_time = true
 var delivering_first_time = true
+var menu_open = false
 
 func _ready():
+	AudioServer.set_bus_volume_db(0, linear_to_db(1.0))
 	dark_overlay = ColorRect.new()
 	dark_overlay.color = Color(0, 0, 0, 0.6)
 	dark_overlay.visible = false
@@ -171,11 +173,13 @@ func _ready():
 	warning_player.volume_db = -20
 	update_score_ui()
 	update_reputation_ui()
-	await get_tree().create_timer(spawn_delay).timeout
+	await get_tree().create_timer(spawn_delay, false).timeout
 	start_customer()
 
 
 func _process(delta):
+	if get_tree().paused:
+		return
 	if approach_timer_running:
 		var progress = approach_timer / approach_time_max
 		clock.value = progress * 100.0
@@ -414,7 +418,9 @@ func generate_recipe():
 
 
 func _input(event):
-
+	if event.is_action_pressed("menu_toggle"):
+		toggle_menu()
+		
 	if state == GameState.SHOW_RECIPE:
 		if event.is_action_pressed("w") or event.is_action_pressed("a") or event.is_action_pressed("s") or event.is_action_pressed("d"):
 			start_mixing()
@@ -1004,8 +1010,26 @@ func show_recipe_comparison():
 		player_container.add_child(player_slot)
 
 
-func _on_exit_pressed() -> void:
-	get_tree().quit()
-
 func _on_credits_pressed() -> void:
 	pass
+
+
+func _on_h_slider_value_changed(value: float) -> void:
+	AudioServer.set_bus_volume_db(0, linear_to_db(value))
+
+
+func toggle_menu():
+	menu_open = !menu_open
+
+	if menu_open:
+		dark_overlay.visible = true
+		get_node("/root/Node2D/Menu").visible = true
+		get_tree().paused = true
+
+		warning_player.stop()
+		warning_playing = false
+
+	else:
+		dark_overlay.visible = false
+		get_node("/root/Node2D/Menu").visible = false
+		get_tree().paused = false
