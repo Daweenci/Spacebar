@@ -139,6 +139,7 @@ var result_visible_y = 360
 var dark_overlay: ColorRect
 
 var approaching_customer_first_time = true
+var delivering_first_time = true
 
 func _ready():
 	dark_overlay = ColorRect.new()
@@ -276,7 +277,7 @@ func accept_order():
 		return
 	
 	if (approaching_customer_first_time):
-		approaching_customer_first_time = false
+		#approaching_customer_first_time = false
 		arrows.visible = false
 	warning_player.stop()
 	warning_playing = false
@@ -330,6 +331,9 @@ func deliver():
 	if state != GameState.DELIVERY:
 		return
 		
+	if(delivering_first_time):
+		#delivering_first_time = false
+		arrows.visible = false
 	warning_player.stop()
 	warning_playing = false
 	mixing_timer_running = false
@@ -489,7 +493,7 @@ func show_next_choices():
 func handle_selection(event):
 	if input_locked:
 		return
-		
+
 	if event.is_action_pressed("w"):
 		select_ingredient(0)
 
@@ -567,6 +571,8 @@ func finish_mixing():
 	fill_glass()
 	play_brew_animation()
 	state = GameState.DELIVERY
+	if(delivering_first_time):
+		arrows.visible = true
 
 	
 func highlight_slot(index):
@@ -999,4 +1005,7 @@ func show_recipe_comparison():
 
 
 func _on_exit_pressed() -> void:
-	pass # Replace with function body.
+	get_tree().quit()
+
+func _on_credits_pressed() -> void:
+	pass
