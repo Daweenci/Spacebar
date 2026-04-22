@@ -26,5 +26,18 @@ func spawn_meteor():
 	meteor.position = Vector2(lanes[lane_index], -50)
 	add_child(meteor)
 
+var meteor_unlocked = false
+var meteor_delay_done = false
+
 func _on_meteor_timer_timeout():
-	spawn_meteor()
+	if not meteor_unlocked and Global.score >= 5:
+		meteor_unlocked = true
+		_start_meteor_delay()
+		return
+	
+	if meteor_delay_done:
+		spawn_meteor()
+
+func _start_meteor_delay():
+	await get_tree().create_timer(6.0).timeout
+	meteor_delay_done = true

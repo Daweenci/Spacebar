@@ -113,7 +113,6 @@ var mixing_timer = 0.0
 var mixing_timer_running = false
 
 var pending_stars = 0
-var score = 0
 var reputation = 5
 var max_recipe_length = 12
 
@@ -597,7 +596,7 @@ func calculate_score():
 
 
 func apply_result(stars):
-	score += stars
+	Global.score += stars
 	update_score_ui()
 	
 	update_difficulty()
@@ -617,7 +616,7 @@ func apply_result(stars):
 	update_reputation_ui()
 
 	print("Stars:", stars)
-	print("Score:", score)
+	print("Score:", Global.score)
 	print("Reputation:", reputation)
 
 	if reputation <= 0:
@@ -628,13 +627,13 @@ func game_over():
 	dark_overlay.visible = true
 	print("GAME OVER CALLED")
 
-	if score > Global.highscore:
-		Global.highscore = score
+	if Global.score > Global.highscore:
+		Global.highscore = Global.score
 
 	var score_label = game_over_panel.get_node("ScoreLabel")
 	var highscore_label = game_over_panel.get_node("HighscoreLabel")
 
-	score_label.text = "Score: " + str(score)
+	score_label.text = "Score: " + str(Global.score)
 	highscore_label.text = "Highscore: " + str(Global.highscore)
 
 	game_over_panel.visible = true
@@ -645,18 +644,20 @@ func game_over():
 	
 	
 func _on_retry_button_pressed():
+	Global.score = 0
 	dark_overlay.visible = false
 	get_tree().paused = false
 	get_tree().reload_current_scene()
 
 func _on_exit_button_pressed():
+	Global.score = 0
 	dark_overlay.visible = false
 	get_tree().paused = false
 	get_tree().quit()
 	
 	
 func update_score_ui():
-	score_label.text = "Score:" + str(score)
+	score_label.text = "Score:" + str(Global.score)
 
 
 func update_reputation_ui():
@@ -682,7 +683,7 @@ func update_reputation_ui():
 
 
 func update_difficulty():
-	var new_length = recipe_length_start + int(score / 10)
+	var new_length = recipe_length_start + int(Global.score / 10)
 
 	if new_length > max_recipe_length:
 		new_length = max_recipe_length
