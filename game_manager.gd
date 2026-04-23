@@ -63,6 +63,8 @@ var rep_textures = [
 @onready var settings = get_node("/root/Node2D/Settings")
 @onready var credits_panel = get_node("/root/Node2D/Credits/CreditsPanel")
 @onready var highscore_label = get_node("/root/Node2D/Menu/MenuPanel/HighscoreLabel")
+@onready var recipe_scroll = get_node("/root/Node2D/UI/RecipePanelWrapper/RecipePanel/TextureRect")
+@onready var menu_button = get_node("/root/Node2D/UI/MenuButton")
 
 var brew_animating = false
 
@@ -168,6 +170,12 @@ func _ready():
 	credits_panel.z_index = 102
 	player.died.connect(game_over)
 	await get_tree().process_frame
+	if OS.has_feature("mobile"):
+		menu_button.visible = true
+	else:
+		menu_button.visible = false
+
+	menu_button.pressed.connect(_on_menu_button_pressed)
 	credits_start_pos = credits_panel.position
 	result_base_y = result_panel.position.y
 	cauldron_anim.animation_finished.connect(_on_brew_finished)
@@ -430,15 +438,28 @@ func generate_recipe():
 
 
 func _input(event):
+	# --- existing keyboard input ---
 	if event.is_action_pressed("menu_toggle"):
 		toggle_menu()
-		
+
 	if state == GameState.SHOW_RECIPE:
 		if event.is_action_pressed("w") or event.is_action_pressed("a") or event.is_action_pressed("s") or event.is_action_pressed("d"):
 			start_mixing()
 
 	elif state == GameState.MIXING and selecting:
 		handle_selection(event)
+
+	# --- NEW: touch input ---
+	if event is InputEventScreenTouch:
+		if event.pressed:
+			touch_start_pos = event.position
+			is_touching = true
+		else:
+			handle_touch_release(event.position)
+			is_touching = false
+
+	elif event is InputEventScreenDrag and is_touching:
+		handle_swipe(event.position)
 
 
 func show_next_choices():
@@ -1116,18 +1137,6 @@ func toggle_menu():
 
 func update_highscore_ui():
 	highscore_label.text = "Highscore: " + str(Global.highscore)
-	
-func _unhandled_input(event):
-	if event is InputEventScreenTouch:
-		if event.pressed:
-			touch_start_pos = event.position
-			is_touching = true
-		else:
-			handle_touch_release(event.position)
-			is_touching = false
-
-	elif event is InputEventScreenDrag and is_touching:
-		handle_swipe(event.position)
 
 func handle_swipe(current_pos: Vector2):
 	var screen_size = get_viewport().get_visible_rect().size
@@ -1147,10 +1156,14 @@ func handle_swipe(current_pos: Vector2):
 		is_touching = false
 		
 func on_swipe_left():
-	print("Swipe Left")
+	Input.action_press("left")
+	await get_tree().create_timer(0.2).timeout
+	Input.action_release("left")
 
 func on_swipe_right():
-	print("Swipe Right")
+	Input.action_press("right")
+	await get_tree().create_timer(0.2).timeout
+	Input.action_release("right")
 	
 func handle_touch_release(pos: Vector2):
 	if not is_touching:
@@ -1159,13 +1172,16 @@ func handle_touch_release(pos: Vector2):
 	
 	match state:
 		GameState.SHOW_RECIPE:
-			handle_recipe_tap(pos, screen_size)
+			handle_recipe_tap(pos)
 		
 		GameState.MIXING:
 			handle_mixing_tap(pos)
 			
-func handle_recipe_tap(pos: Vector2, screen_size: Vector2):
-	if pos.x < screen_size.x * 0.5:
+func handle_recipe_tap(pos: Vector2):
+	print("tapped recipe")
+	var rect = recipe_scroll.get_global_rect().grow(20)
+
+	if rect.has_point(pos):
 		start_mixing()
 		
 		
@@ -1181,3 +1197,6 @@ func handle_mixing_tap(pos: Vector2):
 		if rect.has_point(pos):
 			select_ingredient(i)
 			return
+			
+func _on_menu_button_pressed():
+	toggle_menu()
