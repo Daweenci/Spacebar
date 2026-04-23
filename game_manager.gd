@@ -168,6 +168,7 @@ func _ready():
 	dark_overlay.z_index = 100
 	game_over_panel.z_index = 101
 	credits_panel.z_index = 102
+	menu_button.z_index = 103
 	player.died.connect(game_over)
 	await get_tree().process_frame
 	if OS.has_feature("mobile"):
