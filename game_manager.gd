@@ -61,6 +61,8 @@ var rep_textures = [
 @onready var player = get_node("/root/Node2D/Player")
 @onready var arrows = get_node("/root/Node2D/Arrows")
 @onready var settings = get_node("/root/Node2D/Settings")
+@onready var credits_panel = get_node("/root/Node2D/Credits/CreditsPanel")
+@onready var highscore_label = get_node("/root/Node2D/Menu/MenuPanel/HighscoreLabel")
 
 var brew_animating = false
 
@@ -143,6 +145,9 @@ var approaching_customer_first_time = true
 var delivering_first_time = true
 var menu_open = false
 var game_is_over = false
+var credits_active = false
+var credits_tween
+var credits_start_pos: Vector2
 
 func _ready():
 	AudioServer.set_bus_volume_db(0, linear_to_db(1.0))
@@ -157,8 +162,10 @@ func _ready():
 
 	dark_overlay.z_index = 100
 	game_over_panel.z_index = 101
+	credits_panel.z_index = 102
 	player.died.connect(game_over)
 	await get_tree().process_frame
+	credits_start_pos = credits_panel.position
 	result_base_y = result_panel.position.y
 	cauldron_anim.animation_finished.connect(_on_brew_finished)
 	glass_empty.visible = true
@@ -420,8 +427,6 @@ func generate_recipe():
 
 
 func _input(event):
-	if game_is_over:
-		return
 	if event.is_action_pressed("menu_toggle"):
 		toggle_menu()
 		
@@ -649,6 +654,8 @@ func apply_result(stars):
 		
 func game_over():
 	game_is_over = true
+	warning_player.stop()
+	warning_playing = false
 	dark_overlay.visible = true
 	print("GAME OVER CALLED")
 
@@ -678,7 +685,6 @@ func _on_retry_button_pressed():
 func _on_exit_button_pressed():
 	Global.score = 0
 	dark_overlay.visible = false
-	get_tree().paused = false
 	get_tree().quit()
 	
 	
@@ -1017,9 +1023,44 @@ func show_recipe_comparison():
 
 
 func _on_credits_pressed() -> void:
-	pass
+	print("rolling credits")
 
+	if game_is_over:
+		game_over_panel.visible = false
+	else:
+		get_node("/root/Node2D/Menu/MenuPanel").visible = false
 
+	credits_panel.visible = true
+	start_credits_roll()
+
+func start_credits_roll():
+	credits_active = true
+
+	credits_panel.position = credits_start_pos
+
+	var target_y = -credits_panel.size.y - 200
+
+	credits_tween = create_tween()
+	credits_tween.set_trans(Tween.TRANS_LINEAR)
+
+	credits_tween.tween_property(credits_panel, "position:y", target_y, 5.0)
+
+	credits_tween.finished.connect(_on_credits_finished)
+
+func _on_credits_finished():
+	credits_active = false
+
+	var menu_panel = get_node("/root/Node2D/Menu/MenuPanel")
+
+	credits_panel.visible = false
+	
+	if game_is_over:
+		game_over_panel.visible = true
+	else:
+		menu_panel.visible = true
+
+	credits_panel.position = credits_start_pos
+	
 func _on_h_slider_value_changed(value: float) -> void:
 	AudioServer.set_bus_volume_db(0, linear_to_db(value))
 
@@ -1029,20 +1070,39 @@ func _on_settings_pressed() -> void:
 	settings.visible = true
 	
 	
-	
 func toggle_menu():
 	var menu = get_node("/root/Node2D/Menu")
-	if (!settings.visible):
+
+	if credits_active:
+		credits_active = false
+
+		if credits_tween:
+			credits_tween.kill()
+
+		credits_panel.visible = false
+		credits_panel.position = credits_start_pos
+
+		if game_is_over:
+			game_over_panel.visible = true
+		else:
+			menu.get_node("MenuPanel").visible = true
+
+		return
+
+	if game_is_over:
+		return
+
+	if !settings.visible:
 		menu_open = !menu_open
 
 		if menu_open:
+			update_highscore_ui()
 			dark_overlay.visible = true
 			menu.visible = true
 			get_tree().paused = true
 
 			warning_player.stop()
 			warning_playing = false
-
 		else:
 			dark_overlay.visible = false
 			menu.visible = false
@@ -1050,3 +1110,6 @@ func toggle_menu():
 	else:
 		settings.visible = false
 		menu.visible = true
+
+func update_highscore_ui():
+	highscore_label.text = "Highscore: " + str(Global.highscore)

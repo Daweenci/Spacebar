@@ -1249,6 +1249,31 @@ max_value = 1.0
 step = 0.1
 value = 1.0
 
+[node name="Credits" type="CanvasLayer" parent="." unique_id=186034698]
+
+[node name="CreditsPanel" type="Control" parent="Credits" unique_id=23661133]
+visible = false
+layout_mode = 3
+anchors_preset = 0
+offset_top = 356.0
+offset_right = 40.0
+offset_bottom = 396.0
+
+[node name="Credits" type="Label" parent="Credits/CreditsPanel" unique_id=1268255556]
+layout_mode = 0
+offset_left = 473.0
+offset_top = 235.0
+offset_right = 900.0
+offset_bottom = 724.0
+theme_override_fonts/font = ExtResource("7_x0ka3")
+theme_override_font_sizes/font_size = 64
+text = "Credits
+Designer
+Art
+Programmer
+...
+..."
+
 [connection signal="timeout" from="MeteorTimer" to="MeteorSpawner" method="_on_meteor_timer_timeout"]
 [connection signal="area_entered" from="Player/Hurtbox" to="Player" method="_on_hurtbox_area_entered"]
 [connection signal="pressed" from="GameOver/GameOverPanel/Retry" to="GameManager" method="_on_retry_button_pressed"]
