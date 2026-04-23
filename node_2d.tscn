@@ -1239,6 +1239,7 @@ text = "Volume
 "
 
 [node name="HSlider" type="HSlider" parent="Settings/SettingsPanel" unique_id=588384679]
+process_mode = 3
 layout_mode = 0
 offset_left = 539.0
 offset_top = 363.0
@@ -1253,6 +1254,7 @@ value = 1.0
 [connection signal="pressed" from="GameOver/GameOverPanel/Retry" to="GameManager" method="_on_retry_button_pressed"]
 [connection signal="pressed" from="GameOver/GameOverPanel/Exit" to="GameManager" method="_on_exit_button_pressed"]
 [connection signal="pressed" from="GameOver/GameOverPanel/Credits" to="GameManager" method="_on_credits_pressed"]
+[connection signal="pressed" from="Menu/MenuPanel/Settings" to="GameManager" method="_on_settings_pressed"]
 [connection signal="pressed" from="Menu/MenuPanel/Retry" to="GameManager" method="_on_retry_button_pressed"]
 [connection signal="pressed" from="Menu/MenuPanel/Exit" to="GameManager" method="_on_exit_button_pressed"]
 [connection signal="pressed" from="Menu/MenuPanel/Credits" to="GameManager" method="_on_credits_pressed"]

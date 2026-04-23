@@ -60,6 +60,7 @@ var rep_textures = [
 @onready var game_over_panel = get_node("/root/Node2D/GameOver/GameOverPanel")
 @onready var player = get_node("/root/Node2D/Player")
 @onready var arrows = get_node("/root/Node2D/Arrows")
+@onready var settings = get_node("/root/Node2D/Settings")
 
 var brew_animating = false
 
@@ -1022,19 +1023,30 @@ func _on_credits_pressed() -> void:
 func _on_h_slider_value_changed(value: float) -> void:
 	AudioServer.set_bus_volume_db(0, linear_to_db(value))
 
-
+func _on_settings_pressed() -> void:
+	print("hi!")
+	get_node("/root/Node2D/Menu").visible = false
+	settings.visible = true
+	
+	
+	
 func toggle_menu():
-	menu_open = !menu_open
+	var menu = get_node("/root/Node2D/Menu")
+	if (!settings.visible):
+		menu_open = !menu_open
 
-	if menu_open:
-		dark_overlay.visible = true
-		get_node("/root/Node2D/Menu").visible = true
-		get_tree().paused = true
+		if menu_open:
+			dark_overlay.visible = true
+			menu.visible = true
+			get_tree().paused = true
 
-		warning_player.stop()
-		warning_playing = false
+			warning_player.stop()
+			warning_playing = false
 
+		else:
+			dark_overlay.visible = false
+			menu.visible = false
+			get_tree().paused = false
 	else:
-		dark_overlay.visible = false
-		get_node("/root/Node2D/Menu").visible = false
-		get_tree().paused = false
+		settings.visible = false
+		menu.visible = true
