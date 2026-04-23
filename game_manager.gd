@@ -64,7 +64,7 @@ var rep_textures = [
 @onready var credits_panel = get_node("/root/Node2D/Credits/CreditsPanel")
 @onready var highscore_label = get_node("/root/Node2D/Menu/MenuPanel/HighscoreLabel")
 @onready var recipe_scroll = get_node("/root/Node2D/UI/RecipePanelWrapper/RecipePanel/TextureRect")
-@onready var menu_button = get_node("/root/Node2D/UI/MenuButton")
+@onready var menu_button = get_node("/root/Node2D/MenuButton/MenuButton")
 
 var brew_animating = false
 
@@ -155,10 +155,12 @@ var touch_start_pos = Vector2.ZERO
 var is_touching = false
 
 func _ready():
+	menu_button.process_mode = Node.PROCESS_MODE_ALWAYS
 	AudioServer.set_bus_volume_db(0, linear_to_db(1.0))
 	dark_overlay = ColorRect.new()
 	dark_overlay.color = Color(0, 0, 0, 0.6)
 	dark_overlay.visible = false
+	dark_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 	dark_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
 
@@ -176,7 +178,6 @@ func _ready():
 	else:
 		menu_button.visible = false
 
-	menu_button.pressed.connect(_on_menu_button_pressed)
 	credits_start_pos = credits_panel.position
 	result_base_y = result_panel.position.y
 	cauldron_anim.animation_finished.connect(_on_brew_finished)
@@ -1125,6 +1126,7 @@ func toggle_menu():
 			dark_overlay.visible = true
 			menu.visible = true
 			get_tree().paused = true
+			menu_button.move_to_front()
 
 			warning_player.stop()
 			warning_playing = false

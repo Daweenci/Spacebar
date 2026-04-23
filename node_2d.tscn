@@ -954,16 +954,6 @@ text = "Your Brew"
 layout_mode = 2
 columns = 6
 
-[node name="MenuButton" type="Button" parent="UI" unique_id=1104819918]
-process_mode = 3
-offset_left = 13.0
-offset_top = 12.0
-offset_right = 106.0
-offset_bottom = 60.0
-theme_override_fonts/font = ExtResource("7_x0ka3")
-theme_override_font_sizes/font_size = 32
-text = "Menu"
-
 [node name="CauldronWrapper" type="Node2D" parent="." unique_id=235885093]
 position = Vector2(-118, 506)
 scale = Vector2(6, 6)
@@ -1055,9 +1045,13 @@ collision_mask = 2
 script = ExtResource("3_0hol4")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Player" unique_id=723798775]
+position = Vector2(0, -14)
+scale = Vector2(1, 0.7200196)
 shape = SubResource("CapsuleShape2D_kdubu")
 
 [node name="Hurtbox" type="Area2D" parent="Player" unique_id=122032103]
+position = Vector2(0, -14)
+scale = Vector2(1, 0.7200196)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Player/Hurtbox" unique_id=1598826259]
 shape = SubResource("CapsuleShape2D_kdubu")
@@ -1292,6 +1286,18 @@ anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
+[node name="MenuButton" type="CanvasLayer" parent="." unique_id=412699595]
+
+[node name="MenuButton" type="Button" parent="MenuButton" unique_id=1753293908]
+process_mode = 3
+offset_left = 13.0
+offset_top = 12.0
+offset_right = 106.0
+offset_bottom = 60.0
+theme_override_fonts/font = ExtResource("7_x0ka3")
+theme_override_font_sizes/font_size = 32
+text = "Menu"
+
 [connection signal="timeout" from="MeteorTimer" to="MeteorSpawner" method="_on_meteor_timer_timeout"]
 [connection signal="area_entered" from="Player/Hurtbox" to="Player" method="_on_hurtbox_area_entered"]
 [connection signal="pressed" from="GameOver/GameOverPanel/Retry" to="GameManager" method="_on_retry_button_pressed"]
@@ -1302,3 +1308,4 @@ offset_bottom = 40.0
 [connection signal="pressed" from="Menu/MenuPanel/Exit" to="GameManager" method="_on_exit_button_pressed"]
 [connection signal="pressed" from="Menu/MenuPanel/Credits" to="GameManager" method="_on_credits_pressed"]
 [connection signal="value_changed" from="Settings/SettingsPanel/HSlider" to="GameManager" method="_on_h_slider_value_changed"]
+[connection signal="pressed" from="MenuButton/MenuButton" to="GameManager" method="_on_menu_button_pressed"]
