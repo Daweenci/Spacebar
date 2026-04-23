@@ -1274,6 +1274,14 @@ Programmer
 ...
 ..."
 
+[node name="TouchScreen" type="CanvasLayer" parent="." unique_id=955891484]
+
+[node name="TouchScreenPanel" type="Control" parent="TouchScreen" unique_id=1194362368]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
 [connection signal="timeout" from="MeteorTimer" to="MeteorSpawner" method="_on_meteor_timer_timeout"]
 [connection signal="area_entered" from="Player/Hurtbox" to="Player" method="_on_hurtbox_area_entered"]
 [connection signal="pressed" from="GameOver/GameOverPanel/Retry" to="GameManager" method="_on_retry_button_pressed"]

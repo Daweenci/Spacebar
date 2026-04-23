@@ -149,6 +149,9 @@ var credits_active = false
 var credits_tween
 var credits_start_pos: Vector2
 
+var touch_start_pos = Vector2.ZERO
+var is_touching = false
+
 func _ready():
 	AudioServer.set_bus_volume_db(0, linear_to_db(1.0))
 	dark_overlay = ColorRect.new()
@@ -1113,3 +1116,68 @@ func toggle_menu():
 
 func update_highscore_ui():
 	highscore_label.text = "Highscore: " + str(Global.highscore)
+	
+func _unhandled_input(event):
+	if event is InputEventScreenTouch:
+		if event.pressed:
+			touch_start_pos = event.position
+			is_touching = true
+		else:
+			handle_touch_release(event.position)
+			is_touching = false
+
+	elif event is InputEventScreenDrag and is_touching:
+		handle_swipe(event.position)
+
+func handle_swipe(current_pos: Vector2):
+	var screen_size = get_viewport().get_visible_rect().size
+	
+	# Only right side
+	if touch_start_pos.x < screen_size.x * 0.5:
+		return
+	
+	var delta = current_pos - touch_start_pos
+	
+	if abs(delta.x) > 50: # swipe threshold
+		if delta.x > 0:
+			on_swipe_right()
+		else:
+			on_swipe_left()
+		
+		is_touching = false
+		
+func on_swipe_left():
+	print("Swipe Left")
+
+func on_swipe_right():
+	print("Swipe Right")
+	
+func handle_touch_release(pos: Vector2):
+	if not is_touching:
+		return
+	var screen_size = get_viewport().get_visible_rect().size
+	
+	match state:
+		GameState.SHOW_RECIPE:
+			handle_recipe_tap(pos, screen_size)
+		
+		GameState.MIXING:
+			handle_mixing_tap(pos)
+			
+func handle_recipe_tap(pos: Vector2, screen_size: Vector2):
+	if pos.x < screen_size.x * 0.5:
+		start_mixing()
+		
+		
+func handle_mixing_tap(pos: Vector2):
+	if not selecting:
+		return
+
+	var slots = [slot_w, slot_a, slot_s, slot_d]
+
+	for i in range(slots.size()):
+		var rect = slots[i].get_global_rect().grow(20)
+	
+		if rect.has_point(pos):
+			select_ingredient(i)
+			return
