@@ -141,6 +141,7 @@ var dark_overlay: ColorRect
 var approaching_customer_first_time = true
 var delivering_first_time = true
 var menu_open = false
+var game_is_over = false
 
 func _ready():
 	AudioServer.set_bus_volume_db(0, linear_to_db(1.0))
@@ -272,7 +273,7 @@ func fail_customer():
 	state = GameState.IDLE
 
 	hide_clock()
-	await get_tree().create_timer(cooldown_time).timeout
+	await get_tree().create_timer(cooldown_time, false).timeout
 	start_customer()
 
 
@@ -362,16 +363,16 @@ func deliver():
 	state = GameState.RESULT
 	selecting = false
 	
-	await get_tree().create_timer(0.5).timeout
+	await get_tree().create_timer(0.5, false).timeout
 
 	show_result_panel()
 
 	var result_duration = max(cooldown_time - 1.0, 0.5)
-	await get_tree().create_timer(result_duration).timeout
+	await get_tree().create_timer(result_duration, false).timeout
 
 	hide_result_panel()
 
-	await get_tree().create_timer(1.0).timeout
+	await get_tree().create_timer(1.0, false).timeout
 
 	start_customer()
 
@@ -418,6 +419,8 @@ func generate_recipe():
 
 
 func _input(event):
+	if game_is_over:
+		return
 	if event.is_action_pressed("menu_toggle"):
 		toggle_menu()
 		
@@ -523,7 +526,7 @@ func select_ingredient(index):
 		return
 		
 	highlight_slot(index)
-	await get_tree().create_timer(0.15).timeout
+	await get_tree().create_timer(0.15, false).timeout
 	
 	var chosen = current_choices[index]
 	player_input.append(chosen)
@@ -644,6 +647,7 @@ func apply_result(stars):
 		
 		
 func game_over():
+	game_is_over = true
 	dark_overlay.visible = true
 	print("GAME OVER CALLED")
 
@@ -664,6 +668,7 @@ func game_over():
 	
 	
 func _on_retry_button_pressed():
+	game_is_over = false
 	Global.score = 0
 	dark_overlay.visible = false
 	get_tree().paused = false
@@ -910,7 +915,7 @@ func show_result_panel():
 		full.visible = false
 
 	await tween.finished
-	await get_tree().create_timer(0.3).timeout
+	await get_tree().create_timer(0.3, false).timeout
 
 	await animate_stars(pending_stars)
 
