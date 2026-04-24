@@ -176,7 +176,7 @@ func _ready():
 	if OS.has_feature("mobile"):
 		menu_button.visible = true
 	else:
-		menu_button.visible = false
+		menu_button.visible = true
 
 	credits_start_pos = credits_panel.position
 	result_base_y = result_panel.position.y
@@ -440,10 +440,11 @@ func generate_recipe():
 
 
 func _input(event):
-	# --- existing keyboard input ---
 	if event.is_action_pressed("menu_toggle"):
 		toggle_menu()
 
+	if menu_open or settings.visible:
+		return
 	if state == GameState.SHOW_RECIPE:
 		if event.is_action_pressed("w") or event.is_action_pressed("a") or event.is_action_pressed("s") or event.is_action_pressed("d"):
 			start_mixing()
@@ -451,7 +452,6 @@ func _input(event):
 	elif state == GameState.MIXING and selecting:
 		handle_selection(event)
 
-	# --- NEW: touch input ---
 	if event is InputEventScreenTouch:
 		if event.pressed:
 			touch_start_pos = event.position
