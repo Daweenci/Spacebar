@@ -1265,18 +1265,31 @@ offset_bottom = 396.0
 
 [node name="Credits" type="Label" parent="Credits/CreditsPanel" unique_id=1268255556]
 layout_mode = 0
-offset_left = 473.0
+offset_left = 201.0
 offset_top = 235.0
-offset_right = 900.0
-offset_bottom = 724.0
+offset_right = 1160.0
+offset_bottom = 1049.0
 theme_override_fonts/font = ExtResource("7_x0ka3")
-theme_override_font_sizes/font_size = 64
-text = "Credits
-Designer
-Art
-Programmer
-...
-..."
+theme_override_font_sizes/font_size = 32
+text = "Team (Itch.io Names)
+Game Design: Daweenci, Emir0461, Klagmester55
+Programming: Daweenci 
+Art: Daweenci, Emir0461, Klagmester55 
+Sound Design: Daweenci 
+Website: Klagmester55
+
+Assets 
+Music: Blue Cat Blues by Albert Behar
+ 
+Fonts: Pixeloid Mono 
+Assets: Pixelart animated Star by Narik
+
+Tools & Engine
+Godot
+Aseprite
+
+
+Godot Game Jam #92"
 
 [node name="TouchScreen" type="CanvasLayer" parent="." unique_id=955891484]
 

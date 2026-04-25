@@ -176,7 +176,7 @@ func _ready():
 	if OS.has_feature("mobile"):
 		menu_button.visible = true
 	else:
-		menu_button.visible = true
+		menu_button.visible = false
 
 	credits_start_pos = credits_panel.position
 	result_base_y = result_panel.position.y
@@ -1064,12 +1064,12 @@ func start_credits_roll():
 
 	credits_panel.position = credits_start_pos
 
-	var target_y = -credits_panel.size.y - 200
+	var target_y = -credits_panel.size.y - 450
 
 	credits_tween = create_tween()
 	credits_tween.set_trans(Tween.TRANS_LINEAR)
 
-	credits_tween.tween_property(credits_panel, "position:y", target_y, 5.0)
+	credits_tween.tween_property(credits_panel, "position:y", target_y, 18.0)
 
 	credits_tween.finished.connect(_on_credits_finished)
 
