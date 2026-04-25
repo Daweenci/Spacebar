@@ -1271,7 +1271,7 @@ offset_right = 1160.0
 offset_bottom = 1049.0
 theme_override_fonts/font = ExtResource("7_x0ka3")
 theme_override_font_sizes/font_size = 32
-text = "Team (Itch.io Names)
+text = "Team (Itch.io names)
 Game Design: Daweenci, Emir0461, Klagmester55
 Programming: Daweenci 
 Art: Daweenci, Emir0461, Klagmester55 
