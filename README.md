@@ -77,21 +77,26 @@ Ein fertiger Export ist auf [itch.io](https://klagmester55.itch.io/spacebar) ver
 
 ### Team & Eigenleistungen
 
-Team (Itch.io names)
-Game Design: Daweenci, Emir0461, Klagmester55
-Programming: Daweenci 
-Art: Daweenci, Emir0461, Klagmester55 
-Sound Design: Daweenci 
-Website: Klagmester55
+| Bereich      | Beteiligte                         |
+|--------------|----------------------------------|
+| Game Design  | Daweenci, Emir0461, Klagmester55 |
+| Programming  | Daweenci                         |
+| Art          | Daweenci, Emir0461, Klagmester55 |
+| Sound Design | Daweenci                         |
+| Website      | Klagmester55                     |
 
-**Alle Grafiken** (Sprites, Charaktere, UI-Elemente, Hintergründe) wurden **vollständig selbst erstellt** – handgepixelt in [Aseprite](https://www.aseprite.org/). bis auf eine Ausnahme ("Pixelart animated Star by Narik")
+**Hinweis:**  
+Alle Grafiken (Sprites, Charaktere, UI-Elemente, Hintergründe) wurden vollständig selbst erstellt – handgepixelt in Aseprite (mit Ausnahme von „Pixelart animated Star by Narik“).
+
+---
 
 ### Externe Assets & Tools
 
-Assets 
-Music: Blue Cat Blues by Albert Behar
-Fonts: Pixeloid Mono 
-Assets: Pixelart animated Star by Narik
+| Kategorie | Name                    | Urheber / Quelle |
+|-----------|-------------------------|-------------------|
+| Music     | Blue Cat Blues          | Albert Behar     |
+| Font      | Pixeloid Mono           | GGBotNet         |
+| Asset     | Pixelart animated Star  | Narik            |
 
 > ⚠️ **Alle Grafiken sind Eigenleistung.** Fremde Assets sind in der Tabelle oben vollständig aufgeführt.
 
