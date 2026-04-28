@@ -1,5 +1,7 @@
 extends Node
 
+# ─── Enums ───────────────────────────────────────────────────────────────────
+
 enum GameState {
 	IDLE,
 	CLIENT_WAITING,
@@ -8,6 +10,8 @@ enum GameState {
 	DELIVERY,
 	RESULT
 }
+
+# ─── Preloads ─────────────────────────────────────────────────────────────────
 
 var ingredient_textures = {
 	"space_fruit_1": preload("res://Sprites/SpaceFruit1.png"),
@@ -24,6 +28,7 @@ var ingredient_textures = {
 	"space_fruit_12": preload("res://Sprites/SpaceFruit12.png")
 }
 
+# Index 0–4 entspricht den 5 Reputationsstufen (schlecht → gut)
 var rep_textures = [
 	preload("res://Sprites/bad_rep.png"),        # 0
 	preload("res://Sprites/mid_bad_rep.png"),    # 1
@@ -31,6 +36,11 @@ var rep_textures = [
 	preload("res://Sprites/mid_good_rep.png"),   # 3
 	preload("res://Sprites/good_rep.png")        # 4
 ]
+
+var slot_scene = preload("res://ingredient_slot.tscn")
+var paper_texture = preload("res://Sprites/Schriftrolle.png")
+
+# ─── Node References ──────────────────────────────────────────────────────────
 
 @onready var customer = get_node("/root/Node2D/Customer")
 @onready var clock = get_node("/root/Node2D/UI/Clock")
@@ -66,40 +76,19 @@ var rep_textures = [
 @onready var recipe_scroll = get_node("/root/Node2D/UI/RecipePanelWrapper/RecipePanel/TextureRect")
 @onready var menu_button = get_node("/root/Node2D/MenuButton/MenuButton")
 
-var brew_animating = false
+# ─── Config ───────────────────────────────────────────────────────────────────
 
-var slot_scene = preload("res://ingredient_slot.tscn")
-
-var possible_ingredients = ["space_fruit_1", "space_fruit_2", "space_fruit_3", 
-"space_fruit_4", "space_fruit_5", "space_fruit_6", "space_fruit_7", "space_fruit_8",
-"space_fruit_9", "space_fruit_10", "space_fruit_11", "space_fruit_12"]
-
-var fly_sound = "res://Sprites/fly.wav"
-var fly_away_sound = "res://Sprites/fly_away.wav"
-@onready var warning_player = AudioStreamPlayer.new()
-var warning_playing = false
-var warning_threshold = 5.0
-
-var current_recipe = []
-var player_input = []
-var recipe_length_start = 3
-var recipe_length = recipe_length_start
-var round_recipe_length = 3
-
-var current_step = 0 #beim Mixing
-var current_choices = []
-var selecting = false
-
-# config
 var spawn_delay = 5.0
 var cooldown_time = 5.0
 
 var approach_time_max = 6.0
 var mixing_time_max = 20.0
 
+# Wie weit der Kunde außerhalb des Bildschirms startet (Y-Achse) bzw. wohin er verschwindet
 var enter_offset_y = 400
 var exit_offset_y = -1000
 
+# Zufällige X-Streuung beim Einlaufen/Verlassen, damit der Kunde nicht immer exakt dieselbe Route nimmt
 var enter_random_x = 120
 var exit_random_x = 150
 
@@ -107,59 +96,106 @@ var tween_duration = 1
 
 var customer_target_pos = Vector2(1200, 600)
 
-var customer_start
-var customer_exit
+# Ab wie vielen Sekunden Restzeit der Warnton anfängt zu spielen
+var warning_threshold = 5.0
+var max_recipe_length = 12
+var recipe_length_start = 3
+
+# ─── State Variables ──────────────────────────────────────────────────────────
 
 var state = GameState.IDLE
 
+# approach_timer: läuft ab, während der Kunde auf Bestellung wartet (CLIENT_WAITING)
+# mixing_timer: läuft ab, während der Spieler mixt oder das Rezept anzeigt (SHOW_RECIPE, MIXING, DELIVERY)
 var approach_timer = 0.0
 var approach_timer_running = false
 
 var mixing_timer = 0.0
 var mixing_timer_running = false
 
-var pending_stars = 0
-var reputation = 5
-var max_recipe_length = 12
+var current_recipe = []
+var player_input = []
+var recipe_length = recipe_length_start
+var round_recipe_length = 3
 
+# Welcher Schritt im Rezept gerade dran ist
+var current_step = 0
+var current_choices = []
+var selecting = false
+
+var pending_stars = 0   # Sterne aus dem letzten Mix, zwischengespeichert bis zur Auswertung nach der Lieferung
+var reputation = 5
 var input_locked = false
 var reputation_tween
+# aktuelle Reputation (von 0 bis 4)
 var current_rep_state = 2
+
+var brew_animating = false
+var glass_is_full = false
+var glass_animating = false
+
+var menu_open = false
+var game_is_over = false
+var credits_active = false
+# Diese Flags steuern, ob der Pfeil-Hinweis noch angezeigt werden soll (nur beim allerersten Mal)
+# aber derzeit werden sie immer angezeigt, ist also ein "toter Code" der eventuell in Zukunft je 
+# nach Design Änderungen benutzt werden kann, daher nicht gelöscht
+var approaching_customer_first_time = true
+var delivering_first_time = true
+
+# ─── Customer / Animation ─────────────────────────────────────────────────────
 
 var customer_animations = ["customer1", "customer2", "customer3", "customer4", "customer5"]
 var current_customer_index = 0
+
+var customer_start
+var customer_exit
 
 var recipe_target_pos
 var recipe_start_offset = -720
 var recipe_base_y
 var recipe_visible_y = 720
 
-var paper_texture = preload("res://Sprites/Schriftrolle.png")
-var glass_is_full = false
-var glass_animating = false
-
 var result_base_y
 var result_visible_y = 360
 
-var dark_overlay: ColorRect
-
-var approaching_customer_first_time = true
-var delivering_first_time = true
-var menu_open = false
-var game_is_over = false
-var credits_active = false
 var credits_tween
 var credits_start_pos: Vector2
+
+# Dunkles Overlay hinter Panels (Game Over, Menü) – wird per Code erzeugt statt per Szene
+var dark_overlay: ColorRect
+
+# ─── Audio ────────────────────────────────────────────────────────────────────
+
+var fly_sound = "res://Sprites/fly.wav"
+var fly_away_sound = "res://Sprites/fly_away.wav"
+@onready var warning_player = AudioStreamPlayer.new()
+# Separates Flag, damit der Warnton nicht jedes Frame neu gestartet wird
+var warning_playing = false
+
+# ─── Ingredients ──────────────────────────────────────────────────────────────
+
+var possible_ingredients = ["space_fruit_1", "space_fruit_2", "space_fruit_3", 
+"space_fruit_4", "space_fruit_5", "space_fruit_6", "space_fruit_7", "space_fruit_8",
+"space_fruit_9", "space_fruit_10", "space_fruit_11", "space_fruit_12"]
+
+# ─── Touch Input ──────────────────────────────────────────────────────────────
 
 var touch_start_pos = Vector2.ZERO
 var is_touching = false
 
+# ─── Lifecycle ────────────────────────────────────────────────────────────────
+
 func _ready():
+	# Menü-Button soll auch im Pause-Modus noch klickbar sein
 	menu_button.process_mode = Node.PROCESS_MODE_ALWAYS
 	AudioServer.set_bus_volume_db(0, linear_to_db(1.0))
+
+	# Overlay per Code erstellen, da es über der gesamten UI liegen muss (z_index)
 	dark_overlay = ColorRect.new()
 	dark_overlay.color = Color(0, 0, 0, 0.6)
 	dark_overlay.visible = false
+	# MOUSE_FILTER_IGNORE damit Klicks durch das Overlay durchgehen (es blockt nur visuell)
 	dark_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 	dark_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -167,12 +203,14 @@ func _ready():
 	var ui_root = get_node("/root/Node2D/UI")
 	ui_root.add_child(dark_overlay)
 
+	# Z-Index-Reihenfolge: Overlay → GameOver → Credits → MenuButton
 	dark_overlay.z_index = 100
 	game_over_panel.z_index = 101
 	credits_panel.z_index = 102
 	menu_button.z_index = 103
 	player.died.connect(game_over)
 	await get_tree().process_frame
+	# Menü-Button nur auf Mobile anzeigen – PC-Spieler nutzen die Escape- oder Tab-Taste
 	if OS.has_feature("mobile"):
 		menu_button.visible = true
 	else:
@@ -220,7 +258,8 @@ func _process(delta):
 		if approach_timer <= 0:
 			fail_customer()
 
-
+	# Derselbe Mixing-Timer deckt SHOW_RECIPE, MIXING und DELIVERY ab –
+	# der Spieler hat die gesamte Zeit von Rezeptanzeige bis Lieferung
 	if (state == GameState.SHOW_RECIPE 
 	or state == GameState.MIXING 
 	or state == GameState.DELIVERY) and mixing_timer_running:
@@ -231,6 +270,33 @@ func _process(delta):
 		if mixing_timer <= 0:
 			fail_customer()
 
+
+func _input(event):
+	if event.is_action_pressed("menu_toggle"):
+		toggle_menu()
+
+	if menu_open or settings.visible:
+		return
+	if state == GameState.SHOW_RECIPE:
+		# Beliebige WASD-Taste startet das Mixen – Spieler muss nur irgendeine Taste drücken
+		if event.is_action_pressed("w") or event.is_action_pressed("a") or event.is_action_pressed("s") or event.is_action_pressed("d"):
+			start_mixing()
+
+	elif state == GameState.MIXING and selecting:
+		handle_selection(event)
+
+	if event is InputEventScreenTouch:
+		if event.pressed:
+			touch_start_pos = event.position
+			is_touching = true
+		else:
+			handle_touch_release(event.position)
+			is_touching = false
+
+	elif event is InputEventScreenDrag and is_touching:
+		handle_swipe(event.position)
+
+# ─── Customer Flow ────────────────────────────────────────────────────────────
 
 func start_customer():
 	if (approaching_customer_first_time):
@@ -288,6 +354,7 @@ func fail_customer():
 	ingredients_panel.visible = false
 	selecting = false
 
+	# 1 Stern Bewertung
 	apply_result(1)
 
 	send_customer_away()
@@ -303,7 +370,6 @@ func accept_order():
 		return
 	
 	if (approaching_customer_first_time):
-		#approaching_customer_first_time = false
 		arrows.visible = false
 	warning_player.stop()
 	warning_playing = false
@@ -327,44 +393,19 @@ func accept_order():
 	state = GameState.SHOW_RECIPE
 
 
-func start_mixing():
-	if state != GameState.SHOW_RECIPE:
-		return
-
-	var tween = create_tween()
-	tween.set_trans(Tween.TRANS_CUBIC)
-	tween.set_ease(Tween.EASE_IN)
-
-	tween.tween_property(recipe_panel, "position:y", recipe_base_y, 0.4)
-
-	tween.finished.connect(func():
-		recipe_panel.visible = false
-	)
-
-	ingredients_panel.visible = true
-	show_cauldron()
-	show_glass()
-	player_input.clear()
-	current_step = 0
-	selecting = true
-
-	show_next_choices()
-
-	state = GameState.MIXING
-
-
 func deliver():
 	if state != GameState.DELIVERY:
 		return
 		
 	if(delivering_first_time):
-		#delivering_first_time = false
 		arrows.visible = false
 	warning_player.stop()
 	warning_playing = false
 	mixing_timer_running = false
 	hide_clock()
 
+	# Falls der Spieler zu früh liefert während Animationen noch laufen, sofort abbrechen,
+	# damit keine Komischen visuellen Bugs entstehen
 	if glass_animating:
 		glass_anim.stop()
 		glass_anim.visible = false
@@ -397,33 +438,7 @@ func deliver():
 
 	start_customer()
 
-
-func show_clock():
-	clock.visible = true
-	clock.scale = Vector2.ZERO
-
-	var tween = create_tween()
-	tween.set_trans(Tween.TRANS_BACK)
-	tween.set_ease(Tween.EASE_OUT)
-
-	tween.tween_property(clock, "scale", Vector2(1.2, 1.2), 0.2)
-	tween.tween_property(clock, "scale", Vector2(1.0, 1.0), 0.1)
-
-
-func hide_clock():
-	warning_player.stop()
-	warning_playing = false
-	var tween = create_tween()
-	tween.set_trans(Tween.TRANS_BACK)
-	tween.set_ease(Tween.EASE_IN)
-
-	tween.tween_property(clock, "scale", Vector2(1.2, 1.2), 0.1)
-	tween.tween_property(clock, "scale", Vector2.ZERO, 0.2)
-
-	tween.finished.connect(func():
-		clock.visible = false
-	)
-
+# ─── Recipe ───────────────────────────────────────────────────────────────────
 
 func generate_recipe():
 	current_recipe.clear()
@@ -431,6 +446,8 @@ func generate_recipe():
 	var pool = possible_ingredients.duplicate()
 	pool.shuffle()
 
+	# round_recipe_length wird hier eingefroren – recipe_length könnte sich später noch ändern,
+	# wenn nächste Schierigkeit freigeschaltet wurde -> führte vorher zu UI Bugs
 	round_recipe_length = recipe_length
 
 	for i in range(round_recipe_length):
@@ -439,29 +456,57 @@ func generate_recipe():
 	print("Recipe:", current_recipe)
 
 
-func _input(event):
-	if event.is_action_pressed("menu_toggle"):
-		toggle_menu()
+func show_recipe_ui():
+	for child in recipe_container.get_children():
+		child.queue_free()
 
-	if menu_open or settings.visible:
+	for ingredient in current_recipe:
+		var slot = slot_scene.instantiate()
+
+		slot.custom_minimum_size = Vector2(104, 104)
+
+		var texture_rect = slot.get_node("TextureRect")
+		texture_rect.texture = ingredient_textures[ingredient]
+
+		texture_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		texture_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		texture_rect.anchor_left = 0
+		texture_rect.anchor_top = 0
+		texture_rect.anchor_right = 1
+		texture_rect.anchor_bottom = 1
+		texture_rect.offset_left = 0
+		texture_rect.offset_top = 0
+		texture_rect.offset_right = 0
+		texture_rect.offset_bottom = 0
+
+		recipe_container.add_child(slot)
+
+# ─── Mixing ───────────────────────────────────────────────────────────────────
+
+func start_mixing():
+	if state != GameState.SHOW_RECIPE:
 		return
-	if state == GameState.SHOW_RECIPE:
-		if event.is_action_pressed("w") or event.is_action_pressed("a") or event.is_action_pressed("s") or event.is_action_pressed("d"):
-			start_mixing()
 
-	elif state == GameState.MIXING and selecting:
-		handle_selection(event)
+	var tween = create_tween()
+	tween.set_trans(Tween.TRANS_CUBIC)
+	tween.set_ease(Tween.EASE_IN)
 
-	if event is InputEventScreenTouch:
-		if event.pressed:
-			touch_start_pos = event.position
-			is_touching = true
-		else:
-			handle_touch_release(event.position)
-			is_touching = false
+	tween.tween_property(recipe_panel, "position:y", recipe_base_y, 0.4)
 
-	elif event is InputEventScreenDrag and is_touching:
-		handle_swipe(event.position)
+	tween.finished.connect(func():
+		recipe_panel.visible = false
+	)
+
+	ingredients_panel.visible = true
+	show_cauldron()
+	show_glass()
+	player_input.clear()
+	current_step = 0
+	selecting = true
+
+	show_next_choices()
+
+	state = GameState.MIXING
 
 
 func show_next_choices():
@@ -531,6 +576,7 @@ func show_next_choices():
 
 		texture_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 
+
 func handle_selection(event):
 	if input_locked:
 		return
@@ -552,6 +598,7 @@ func select_ingredient(index):
 	if input_locked:
 		return
 
+	# Kurz sperren, damit während des Highlights keine zweite Auswahl reinkommt
 	input_locked = true
 	
 	if index >= current_choices.size():
@@ -578,36 +625,11 @@ func select_ingredient(index):
 	input_locked = false
 
 
-func show_recipe_ui():
-	for child in recipe_container.get_children():
-		child.queue_free()
-
-	for ingredient in current_recipe:
-		var slot = slot_scene.instantiate()
-
-		slot.custom_minimum_size = Vector2(104, 104)
-
-		var texture_rect = slot.get_node("TextureRect")
-		texture_rect.texture = ingredient_textures[ingredient]
-
-		texture_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		texture_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		texture_rect.anchor_left = 0
-		texture_rect.anchor_top = 0
-		texture_rect.anchor_right = 1
-		texture_rect.anchor_bottom = 1
-		texture_rect.offset_left = 0
-		texture_rect.offset_top = 0
-		texture_rect.offset_right = 0
-		texture_rect.offset_bottom = 0
-
-		recipe_container.add_child(slot)
-
-
 func finish_mixing():
 	selecting = false
 	ingredients_panel.visible = false
 
+	# Sterne jetzt berechnen und zwischenspeichern – anzeigen erst nach der Lieferanimation
 	pending_stars = calculate_score()
 	fill_glass()
 	play_brew_animation()
@@ -615,7 +637,7 @@ func finish_mixing():
 	if(delivering_first_time):
 		arrows.visible = true
 
-	
+
 func highlight_slot(index):
 	var slots = [slot_w, slot_a, slot_s, slot_d]
 
@@ -623,8 +645,9 @@ func highlight_slot(index):
 		slots[i].modulate = Color(1, 1, 1)
 
 	slots[index].modulate = Color(1.5, 1.5, 1.5)
-	
-	
+
+# ─── Scoring & Reputation ─────────────────────────────────────────────────────
+
 func calculate_score():
 	var correct = 0
 
@@ -676,44 +699,18 @@ func apply_result(stars):
 
 	if reputation <= 0:
 		game_over()
-		
-		
-func game_over():
-	game_is_over = true
-	warning_player.stop()
-	warning_playing = false
-	dark_overlay.visible = true
-	print("GAME OVER CALLED")
 
-	if Global.score > Global.highscore:
-		Global.highscore = Global.score
 
-	var score_label = game_over_panel.get_node("ScoreLabel")
-	var highscore_label = game_over_panel.get_node("HighscoreLabel")
+func update_difficulty():
+	var new_length = recipe_length_start + int(Global.score / 10)
 
-	score_label.text = "Score: " + str(Global.score)
-	highscore_label.text = "Highscore: " + str(Global.highscore)
+	if new_length > max_recipe_length:
+		new_length = max_recipe_length
 
-	game_over_panel.visible = true
+	recipe_length = new_length
 
-	await get_tree().process_frame
+# ─── UI Updates ───────────────────────────────────────────────────────────────
 
-	get_tree().paused = true
-	
-	
-func _on_retry_button_pressed():
-	game_is_over = false
-	Global.score = 0
-	dark_overlay.visible = false
-	get_tree().paused = false
-	get_tree().reload_current_scene()
-
-func _on_exit_button_pressed():
-	Global.score = 0
-	dark_overlay.visible = false
-	get_tree().quit()
-	
-	
 func update_score_ui():
 	score_label.text = "Score:" + str(Global.score)
 
@@ -740,25 +737,11 @@ func update_reputation_ui():
 	update_reputation_sprite()
 
 
-func update_difficulty():
-	var new_length = recipe_length_start + int(Global.score / 10)
-
-	if new_length > max_recipe_length:
-		new_length = max_recipe_length
-
-	recipe_length = new_length
+func update_highscore_ui():
+	highscore_label.text = "Highscore: " + str(Global.highscore)
 
 
-func play_sound(path):
-	var player = AudioStreamPlayer.new()
-	player.volume_db = -28
-	add_child(player)
-	player.stream = load(path)
-	player.play()
-	player.finished.connect(player.queue_free)
-	
-
-func get_rep_state(rep):
+func get_rep_state(rep): # Reputationsstufe 
 	if rep <= 2:
 		return 0
 	elif rep <= 4:
@@ -769,10 +752,12 @@ func get_rep_state(rep):
 		return 3
 	else:
 		return 4
-		
+
+
 func update_reputation_sprite():
 	var new_state = get_rep_state(reputation)
 
+	# Nur animieren wenn sich die Stufe wirklich geändert hat (z.B. 7→8 bleibt Stufe 3)
 	if new_state == current_rep_state:
 		return
 
@@ -793,6 +778,35 @@ func play_rep_transition(new_state):
 
 	tween.tween_property(reputation_sprite, "scale", Vector2(1, 1), 0.4)
 
+# ─── Clock ────────────────────────────────────────────────────────────────────
+
+func show_clock():
+	clock.visible = true
+	clock.scale = Vector2.ZERO
+
+	var tween = create_tween()
+	tween.set_trans(Tween.TRANS_BACK)
+	tween.set_ease(Tween.EASE_OUT)
+
+	tween.tween_property(clock, "scale", Vector2(1.2, 1.2), 0.2)
+	tween.tween_property(clock, "scale", Vector2(1.0, 1.0), 0.1)
+
+
+func hide_clock():
+	warning_player.stop()
+	warning_playing = false
+	var tween = create_tween()
+	tween.set_trans(Tween.TRANS_BACK)
+	tween.set_ease(Tween.EASE_IN)
+
+	tween.tween_property(clock, "scale", Vector2(1.2, 1.2), 0.1)
+	tween.tween_property(clock, "scale", Vector2.ZERO, 0.2)
+
+	tween.finished.connect(func():
+		clock.visible = false
+	)
+
+# ─── Cauldron & Glass ─────────────────────────────────────────────────────────
 
 func show_cauldron():
 	var target_x = 116
@@ -807,37 +821,6 @@ func show_cauldron():
 
 	tween.tween_property(cauldron, "position:x", target_x, 0.6)
 
-func show_glass():
-	var target_x = 220  
-	var start_x = 700   
-
-	glass.position.x = start_x
-	glass.visible = true
-
-	var tween = create_tween()
-	tween.set_trans(Tween.TRANS_SINE)
-	tween.set_ease(Tween.EASE_OUT)
-
-	tween.tween_property(glass, "position:x", target_x, 0.6)
-
-
-func fill_glass():
-	glass_animating = true
-
-	glass_empty.visible = true
-	glass_full.visible = false
-	glass_anim.visible = true
-
-	glass_anim.play("fill")
-
-	await glass_anim.animation_finished
-
-	glass_anim.visible = false
-	glass_empty.visible = false
-	glass_full.visible = true
-
-	glass_is_full = true
-	glass_animating = false
 
 func hide_cauldron():
 	var target_x = -300
@@ -847,29 +830,6 @@ func hide_cauldron():
 	tween.set_ease(Tween.EASE_IN)
 
 	tween.tween_property(cauldron, "position:x", target_x, 0.5)
-	
-func hide_glass():
-	var target_x = 700
-
-	var tween = create_tween()
-	tween.set_trans(Tween.TRANS_SINE)
-	tween.set_ease(Tween.EASE_IN)
-
-	tween.tween_property(glass, "position:x", target_x, 0.5)
-
-	tween.finished.connect(func():
-		reset_glass()
-	)
-	
-func reset_glass():
-	glass_anim.stop()
-	glass_anim.visible = false
-
-	glass_empty.visible = true
-	glass_full.visible = false
-
-	glass_is_full = false
-	glass.visible = false
 
 
 func play_brew_animation():
@@ -889,9 +849,11 @@ func stop_brew_animation():
 	
 	cauldron_front.visible = true
 
+
 func _on_brew_finished():
 	if brew_animating:
 		stop_brew_animation()
+
 
 func drop_ingredient(texture):
 	var sprite = Sprite2D.new()
@@ -899,6 +861,7 @@ func drop_ingredient(texture):
 	
 	sprite.scale = Vector2(0.5, 0.5)
 	
+	# Sprite muss vor dem CauldronFront eingefügt werden, damit es im Kessel verschwindet
 	var front_index = cauldron.get_node("CauldronFront").get_index()
 
 	cauldron.add_child(sprite)
@@ -919,6 +882,66 @@ func drop_ingredient(texture):
 	)
 
 
+func show_glass():
+	var target_x = 220  
+	var start_x = 700   
+
+	glass.position.x = start_x
+	glass.visible = true
+
+	var tween = create_tween()
+	tween.set_trans(Tween.TRANS_SINE)
+	tween.set_ease(Tween.EASE_OUT)
+
+	tween.tween_property(glass, "position:x", target_x, 0.6)
+
+
+func hide_glass():
+	var target_x = 700
+
+	var tween = create_tween()
+	tween.set_trans(Tween.TRANS_SINE)
+	tween.set_ease(Tween.EASE_IN)
+
+	tween.tween_property(glass, "position:x", target_x, 0.5)
+
+	# reset_glass erst aufrufen wenn das Glas aus dem Bild ist, nicht sofort
+	tween.finished.connect(func():
+		reset_glass()
+	)
+
+
+func fill_glass():
+	glass_animating = true
+
+	glass_empty.visible = true
+	glass_full.visible = false
+	glass_anim.visible = true
+
+	glass_anim.play("fill")
+
+	await glass_anim.animation_finished
+
+	glass_anim.visible = false
+	glass_empty.visible = false
+	glass_full.visible = true
+
+	glass_is_full = true
+	glass_animating = false
+
+
+func reset_glass():
+	glass_anim.stop()
+	glass_anim.visible = false
+
+	glass_empty.visible = true
+	glass_full.visible = false
+
+	glass_is_full = false
+	glass.visible = false
+
+# ─── Result Panel ─────────────────────────────────────────────────────────────
+
 func show_result_panel():
 	result_panel.visible = true
 	
@@ -936,6 +959,7 @@ func show_result_panel():
 	tween.parallel().tween_property(result_panel, "scale", Vector2(1, 1), 0.8)
 	tween.parallel().tween_property(result_panel, "modulate:a", 1.0, 0.8)
 
+	# Sterne zurücksetzen bevor die Animation startet
 	var stars = stars_container.get_children()
 	for star in stars:
 		var empty = star.get_node("Empty")
@@ -976,6 +1000,7 @@ func animate_stars(amount):
 		tween.tween_property(full, "scale", Vector2(1, 1), 0.2)
 
 		await tween.finished
+
 
 func hide_result_panel():
 	var tween = create_tween()
@@ -1036,6 +1061,7 @@ func show_recipe_comparison():
 		tex.offset_right = 0
 		tex.offset_bottom = 0
 
+		# Falscher Slot bekommt ein rotes X als Overlay-Label
 		if player != correct:
 			var cross = Label.new()
 			cross.text = "✖"
@@ -1047,58 +1073,51 @@ func show_recipe_comparison():
 
 		player_container.add_child(player_slot)
 
+# ─── Game Over ────────────────────────────────────────────────────────────────
 
-func _on_credits_pressed() -> void:
-	print("rolling credits")
+func game_over():
+	game_is_over = true
+	warning_player.stop()
+	warning_playing = false
+	dark_overlay.visible = true
+	print("GAME OVER CALLED")
 
-	if game_is_over:
-		game_over_panel.visible = false
-	else:
-		get_node("/root/Node2D/Menu/MenuPanel").visible = false
+	if Global.score > Global.highscore:
+		Global.highscore = Global.score
 
-	credits_panel.visible = true
-	start_credits_roll()
+	var score_label = game_over_panel.get_node("ScoreLabel")
+	var highscore_label = game_over_panel.get_node("HighscoreLabel")
 
-func start_credits_roll():
-	credits_active = true
+	score_label.text = "Score: " + str(Global.score)
+	highscore_label.text = "Highscore: " + str(Global.highscore)
 
-	credits_panel.position = credits_start_pos
+	game_over_panel.visible = true
 
-	var target_y = -credits_panel.size.y - 450
+	await get_tree().process_frame
 
-	credits_tween = create_tween()
-	credits_tween.set_trans(Tween.TRANS_LINEAR)
+	# Erst nach einem Frame pausieren, damit alle laufenden Signale noch abgeschlossen werden
+	get_tree().paused = true
 
-	credits_tween.tween_property(credits_panel, "position:y", target_y, 18.0)
 
-	credits_tween.finished.connect(_on_credits_finished)
+func _on_retry_button_pressed():
+	game_is_over = false
+	Global.score = 0
+	dark_overlay.visible = false
+	get_tree().paused = false
+	get_tree().reload_current_scene()
 
-func _on_credits_finished():
-	credits_active = false
 
-	var menu_panel = get_node("/root/Node2D/Menu/MenuPanel")
+func _on_exit_button_pressed():
+	Global.score = 0
+	dark_overlay.visible = false
+	get_tree().quit()
 
-	credits_panel.visible = false
-	
-	if game_is_over:
-		game_over_panel.visible = true
-	else:
-		menu_panel.visible = true
+# ─── Menu & Settings ──────────────────────────────────────────────────────────
 
-	credits_panel.position = credits_start_pos
-	
-func _on_h_slider_value_changed(value: float) -> void:
-	AudioServer.set_bus_volume_db(0, linear_to_db(value))
-
-func _on_settings_pressed() -> void:
-	print("hi!")
-	get_node("/root/Node2D/Menu").visible = false
-	settings.visible = true
-	
-	
 func toggle_menu():
 	var menu = get_node("/root/Node2D/Menu")
 
+	# Credits schließen hat Vorrang – zurück zum Menü statt Menü zu toggeln
 	if credits_active:
 		credits_active = false
 
@@ -1135,39 +1154,100 @@ func toggle_menu():
 			menu.visible = false
 			get_tree().paused = false
 	else:
+		# Settings schließen bringt das Menü zurück, nicht das Spiel
 		settings.visible = false
 		menu.visible = true
 
-func update_highscore_ui():
-	highscore_label.text = "Highscore: " + str(Global.highscore)
+
+func _on_settings_pressed() -> void:
+	print("hi!")
+	get_node("/root/Node2D/Menu").visible = false
+	settings.visible = true
+
+
+func _on_h_slider_value_changed(value: float) -> void:
+	AudioServer.set_bus_volume_db(0, linear_to_db(value))
+
+
+func _on_menu_button_pressed():
+	toggle_menu()
+
+# ─── Credits ──────────────────────────────────────────────────────────────────
+
+func _on_credits_pressed() -> void:
+	print("rolling credits")
+
+	if game_is_over:
+		game_over_panel.visible = false
+	else:
+		get_node("/root/Node2D/Menu/MenuPanel").visible = false
+
+	credits_panel.visible = true
+	start_credits_roll()
+
+
+func start_credits_roll():
+	credits_active = true
+
+	credits_panel.position = credits_start_pos
+
+	var target_y = -credits_panel.size.y - 450
+
+	credits_tween = create_tween()
+	credits_tween.set_trans(Tween.TRANS_LINEAR)
+
+	credits_tween.tween_property(credits_panel, "position:y", target_y, 18.0)
+
+	credits_tween.finished.connect(_on_credits_finished)
+
+
+func _on_credits_finished():
+	credits_active = false
+
+	var menu_panel = get_node("/root/Node2D/Menu/MenuPanel")
+
+	credits_panel.visible = false
+	
+	if game_is_over:
+		game_over_panel.visible = true
+	else:
+		menu_panel.visible = true
+
+	credits_panel.position = credits_start_pos
+
+# ─── Touch Input ──────────────────────────────────────────────────────────────
 
 func handle_swipe(current_pos: Vector2):
 	var screen_size = get_viewport().get_visible_rect().size
 	
-	# Only right side
+	# Swipes nur auf der rechten Bildschirmhälfte auswerten
 	if touch_start_pos.x < screen_size.x * 0.5:
 		return
 	
 	var delta = current_pos - touch_start_pos
 	
-	if abs(delta.x) > 50: # swipe threshold
+	if abs(delta.x) > 50:
 		if delta.x > 0:
 			on_swipe_right()
 		else:
 			on_swipe_left()
 		
+		# Touch nach erkanntem Swipe beenden, damit er nicht nochmal ausgewertet wird
 		is_touching = false
-		
+
+
 func on_swipe_left():
 	Input.action_press("left")
 	await get_tree().create_timer(0.2).timeout
 	Input.action_release("left")
 
+
 func on_swipe_right():
 	Input.action_press("right")
 	await get_tree().create_timer(0.2).timeout
 	Input.action_release("right")
-	
+
+
 func handle_touch_release(pos: Vector2):
 	if not is_touching:
 		return
@@ -1179,15 +1259,16 @@ func handle_touch_release(pos: Vector2):
 		
 		GameState.MIXING:
 			handle_mixing_tap(pos)
-			
+
+
 func handle_recipe_tap(pos: Vector2):
 	print("tapped recipe")
 	var rect = recipe_scroll.get_global_rect().grow(20)
 
 	if rect.has_point(pos):
 		start_mixing()
-		
-		
+
+
 func handle_mixing_tap(pos: Vector2):
 	if not selecting:
 		return
@@ -1200,6 +1281,13 @@ func handle_mixing_tap(pos: Vector2):
 		if rect.has_point(pos):
 			select_ingredient(i)
 			return
-			
-func _on_menu_button_pressed():
-	toggle_menu()
+
+# ─── Audio ────────────────────────────────────────────────────────────────────
+
+func play_sound(path):
+	var player = AudioStreamPlayer.new()
+	player.volume_db = -28
+	add_child(player)
+	player.stream = load(path)
+	player.play()
+	player.finished.connect(player.queue_free)
