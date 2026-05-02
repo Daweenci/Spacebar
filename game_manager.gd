@@ -217,8 +217,8 @@ func _ready():
 	menu_button.z_index = 103
 	player.died.connect(game_over)
 	await get_tree().process_frame
-	# Menü-Button nur auf Mobile anzeigen – PC-Spieler nutzen die Escape- oder Tab-Taste
-	if OS.has_feature("mobile"):
+	# Menü-Button nur auf Mobile anzeigen – PC-Spieler nutzen die Tab-Taste
+	if OS.has_feature("mobile") or OS.has_feature("web") and DisplayServer.is_touchscreen_available():
 		menu_button.visible = true
 	else:
 		menu_button.visible = false
