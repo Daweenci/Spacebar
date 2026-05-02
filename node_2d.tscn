@@ -1369,7 +1369,7 @@ offset_right = 1251.0
 offset_bottom = 268.0
 theme_override_fonts/font = ExtResource("7_x0ka3")
 theme_override_font_sizes/font_size = 86
-text = "Thank You For Paying!"
+text = "Thank You For Playing!"
 
 [connection signal="timeout" from="MeteorTimer" to="MeteorSpawner" method="_on_meteor_timer_timeout"]
 [connection signal="area_entered" from="Player/Hurtbox" to="Player" method="_on_hurtbox_area_entered"]
