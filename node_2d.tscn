@@ -1348,7 +1348,6 @@ theme_override_font_sizes/font_size = 32
 text = "Menu"
 
 [node name="EndScreen" type="CanvasLayer" parent="." unique_id=395430912]
-visible = false
 
 [node name="TextureRect" type="TextureRect" parent="EndScreen" unique_id=1324886673]
 offset_right = 40.0
@@ -1363,9 +1362,9 @@ scale = Vector2(8, 8)
 sprite_frames = SubResource("SpriteFrames_j2pq0")
 
 [node name="Label" type="Label" parent="EndScreen" unique_id=1560868491]
-offset_left = 47.0
+offset_left = 20.0
 offset_top = 162.0
-offset_right = 1251.0
+offset_right = 1281.0
 offset_bottom = 268.0
 theme_override_fonts/font = ExtResource("7_x0ka3")
 theme_override_font_sizes/font_size = 86
