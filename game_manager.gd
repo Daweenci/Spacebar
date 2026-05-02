@@ -84,7 +84,7 @@ var spawn_delay = 5.0
 var cooldown_time = 5.0
 
 var approach_time_max = 6.0
-var mixing_time_max = 20.0
+var mixing_time_max
 
 # Wie weit der Kunde außerhalb des Bildschirms startet (Y-Achse) bzw. wohin er verschwindet
 var enter_offset_y = 400
@@ -385,6 +385,7 @@ func accept_order():
 	warning_playing = false
 	approach_timer_running = false
 
+	mixing_time_max = recipe_length * 5.0
 	mixing_timer = mixing_time_max
 	mixing_timer_running = true
 
