@@ -1018,18 +1018,14 @@ func show_recipe_comparison():
 		c.queue_free()
 	for c in player_container.get_children():
 		c.queue_free()
-
 	for i in range(round_recipe_length):
 		var correct = current_recipe[i]
 		var player = player_input[i]
-
 		var correct_slot = slot_scene.instantiate()
 		correct_slot.custom_minimum_size = Vector2(48, 48)
 		correct_slot.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-
 		var tex2 = correct_slot.get_node("TextureRect")
 		tex2.texture = ingredient_textures[correct]
-
 		tex2.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		tex2.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		tex2.anchor_left = 0
@@ -1040,16 +1036,12 @@ func show_recipe_comparison():
 		tex2.offset_top = 0
 		tex2.offset_right = 0
 		tex2.offset_bottom = 0
-
 		correct_container.add_child(correct_slot)
-
 		var player_slot = slot_scene.instantiate()
 		player_slot.custom_minimum_size = Vector2(48, 48)
 		player_slot.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-
 		var tex = player_slot.get_node("TextureRect")
 		tex.texture = ingredient_textures[player]
-
 		tex.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		tex.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		tex.anchor_left = 0
@@ -1060,17 +1052,22 @@ func show_recipe_comparison():
 		tex.offset_top = 0
 		tex.offset_right = 0
 		tex.offset_bottom = 0
-
 		# Falscher Slot bekommt ein rotes X als Overlay-Label
 		if player != correct:
-			var cross = Label.new()
-			cross.text = "✖"
-			cross.scale = Vector2(1.2, 1.2)
-			cross.modulate = Color(1, 0, 0)
-			cross.position = Vector2(2, 2)
-
+			var cross = TextureRect.new()
+			cross.texture = load("res://Sprites/Cross.png")
+			cross.expand_mode = TextureRect.EXPAND_FIT_WIDTH
+			cross.stretch_mode = TextureRect.STRETCH_KEEP
+			cross.custom_minimum_size = Vector2(16, 16)
+			cross.size = Vector2(16, 16)
+			cross.anchor_left = 1
+			cross.anchor_top = 0
+			cross.anchor_right = 0
+			cross.anchor_bottom = 1
+			cross.offset_left = 0
+			cross.offset_top = 0
+			cross.mouse_filter = Control.MOUSE_FILTER_IGNORE
 			player_slot.add_child(cross)
-
 		player_container.add_child(player_slot)
 
 # ─── Game Over ────────────────────────────────────────────────────────────────
@@ -1110,7 +1107,10 @@ func _on_retry_button_pressed():
 func _on_exit_button_pressed():
 	Global.score = 0
 	dark_overlay.visible = false
-	get_tree().quit()
+	if OS.get_name() == "Web":
+		JavaScriptBridge.eval("window.close(); window.location.reload();")
+	else:
+		get_tree().quit()
 
 # ─── Menu & Settings ──────────────────────────────────────────────────────────
 

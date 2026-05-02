@@ -90,7 +90,7 @@ Ein fertiger Export ist auf [itch.io](https://klagmester55.itch.io/spacebar) ver
 | Programming  | Daweenci                         |
 | Art          | Daweenci, Emir0461, Klagmester55 |
 | Sound Design | Daweenci                         |
-| Website      | Klagmester55                     |
+| Website      | Daweenci, Klagmester55           |
 
 **Hinweis:**  
 Alle Grafiken (Sprites, Charaktere, UI-Elemente, Hintergründe) wurden vollständig selbst erstellt – handgepixelt in Aseprite (mit Ausnahme von „Pixelart animated Star by Narik“).
