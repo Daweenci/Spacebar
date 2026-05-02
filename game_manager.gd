@@ -75,6 +75,8 @@ var paper_texture = preload("res://Sprites/Schriftrolle.png")
 @onready var highscore_label = get_node("/root/Node2D/Menu/MenuPanel/HighscoreLabel")
 @onready var recipe_scroll = get_node("/root/Node2D/UI/RecipePanelWrapper/RecipePanel/TextureRect")
 @onready var menu_button = get_node("/root/Node2D/MenuButton/MenuButton")
+@onready var end_screen = get_node("/root/Node2D/EndScreen")
+@onready var end_anim = end_screen.get_node("AnimatedSprite2D")
 
 # ─── Config ───────────────────────────────────────────────────────────────────
 
@@ -184,9 +186,14 @@ var possible_ingredients = ["space_fruit_1", "space_fruit_2", "space_fruit_3",
 var touch_start_pos = Vector2.ZERO
 var is_touching = false
 
+#─── Exiting Game ──────────────────────────────────────────────────────────────
+var exiting = false
+
 # ─── Lifecycle ────────────────────────────────────────────────────────────────
 
 func _ready():
+	end_screen.visible = false
+	end_anim.stop()
 	# Menü-Button soll auch im Pause-Modus noch klickbar sein
 	menu_button.process_mode = Node.PROCESS_MODE_ALWAYS
 	AudioServer.set_bus_volume_db(0, linear_to_db(1.0))
@@ -272,6 +279,8 @@ func _process(delta):
 
 
 func _input(event):
+	if exiting:
+		return
 	if event.is_action_pressed("menu_toggle"):
 		toggle_menu()
 
@@ -1105,10 +1114,18 @@ func _on_retry_button_pressed():
 
 
 func _on_exit_button_pressed():
+	exiting = true
+	
 	Global.score = 0
 	dark_overlay.visible = false
+	
+	end_screen.visible = true
+	end_anim.play()
+
+	await get_tree().create_timer(3.5).timeout
+
 	if OS.get_name() == "Web":
-		JavaScriptBridge.eval("window.close(); window.location.reload();")
+		get_tree().paused = true
 	else:
 		get_tree().quit()
 
