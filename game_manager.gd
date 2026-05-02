@@ -308,8 +308,7 @@ func _input(event):
 # ─── Customer Flow ────────────────────────────────────────────────────────────
 
 func start_customer():
-	if (approaching_customer_first_time):
-		arrows.visible = true
+	arrows.visible = true
 	var anim = customer_animations[current_customer_index]
 	customer.play(anim)
 
@@ -362,6 +361,9 @@ func fail_customer():
 	recipe_panel.visible = false
 	ingredients_panel.visible = false
 	selecting = false
+	
+	approaching_customer_first_time = false  # add this
+	arrows.visible = false                   # and this
 
 	# 1 Stern Bewertung
 	apply_result(1)
@@ -378,8 +380,7 @@ func accept_order():
 	if state != GameState.CLIENT_WAITING:
 		return
 	
-	if (approaching_customer_first_time):
-		arrows.visible = false
+	arrows.visible = false
 	warning_player.stop()
 	warning_playing = false
 	approach_timer_running = false
