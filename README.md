@@ -20,7 +20,7 @@ So lange wie möglich überleben und dabei möglichst viele Sterne durch korrekt
 ### Spielablauf
 1. **Fliegen** – Das Raumschiff weicht Asteroiden aus, indem der Spieler zwischen vier Spuren wechselt.
 2. **Kundenphase** – Ein Kundenschiff fliegt auf Spur 5 ein. Der Spieler hat **6 Sekunden**, um auf Spur 4 zu wechseln und den Auftrag anzunehmen.
-3. **Brauen** – Das Rezept wird angezeigt und muss der Reihe nach nachgebraut werden. Dabei läuft ein gemeinsamer **20-Sekunden-Timer** für Merken, Brauen und Abgabe.
+3. **Brauen** – Das Rezept wird angezeigt und muss der Reihe nach nachgebraut werden. Dabei läuft ein gemeinsamer Timer **berechnet per 5 Sekunden pro Zutat** für Merken, Brauen und Abgabe.
 4. **Abgabe** – Fertig gebraut auf Spur 4 fahren, um das Getränk abzugeben. Bewertung: **1–5 Sterne** je nach korrekten Zutaten in richtiger Reihenfolge.
 
 ### Progression
