@@ -81,7 +81,7 @@ Ein fertiger Export ist auf [itch.io](https://klagmester55.itch.io/spacebar) ver
 | Name         | Itch.io                         | GitHub                          |
 |--------------|---------------------------------|----------------------------------|
 | Daweenci     | https://daweenci.itch.io        | https://github.com/Daweenci      |
-| Emir0461     | https://emir0461.itch.io        | https://github.com/Emir0461      |
+| Emir0461     | https://emir0461.itch.io        | https://github.com/Emi0461      |
 | Klagmester55 | https://klagmester55.itch.io    | https://github.com/koliver2k2 |
 
 | Bereich      | Beteiligte                         |
